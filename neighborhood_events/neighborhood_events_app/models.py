@@ -23,6 +23,7 @@ class UserManager(models.Manager):
             errors['password'] = "Passwords must match", 'confirm_password'
         return errors
     # hello
+#     hello back
 
 
 class User(models.Model):

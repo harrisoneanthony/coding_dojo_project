@@ -22,6 +22,7 @@ class UserManager(models.Manager):
         if postData['password'] != postData['confirm_password']:
             errors['password'] = "Passwords must match", 'confirm_password'
         return errors
+    # hello
 
 
 class User(models.Model):

@@ -20,6 +20,19 @@ def dashboard(request):
     }
     return render(request, "dashboard.html", context)
 
+def create_event_page(request):
+    return render(request, "create_event.html")
+
+def create_event(request):
+    if request.method == "POST":
+        errors = Event.objects.event_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request, value)
+            return redirect('/create/event')
+        else:
+            Event.objects.create(title = request.POST["title"], date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'])
+
 def create_user(request):
     if request.method == "POST":
         errors = User.objects.user_validator(request.POST)

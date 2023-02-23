@@ -7,7 +7,7 @@
             {% csrf_token %}
             <h2 class="text-primary">Register</h2>
             {% if messages %}
-            <ul class="messages">
+            <ul class="messages justify-content-around">
                 {% for message in messages %}
                     <li {% if message.tags %} class="{{message.tags}}" {% endif %}>
                         {{message}}

@@ -19,6 +19,7 @@ def dashboard(request):
         'one_user' : User.objects.get(id=request.session['id']),
         'users_events' : Event.objects.get(user = User.objects.get(id=request.session['id']))
     }
+    print(context)
     return render(request, "dashboard.html", context)
 
 def create_event_page(request):

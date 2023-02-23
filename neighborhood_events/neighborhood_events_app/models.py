@@ -16,6 +16,8 @@ class UserManager(models.Manager):
         if postData['password'] != postData['confirm_password']:
             errors['password'] = "Passwords must match", 'confirm_password'
         return errors
+    # hello
+#     hello back
 
 class EventManager(models.Manager):
     def event_validator(self, postData):

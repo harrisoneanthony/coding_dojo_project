@@ -17,7 +17,7 @@ def login_user(request):
 def dashboard(request):
     context = {
         'one_user' : User.objects.get(id=request.session['id']),
-        'users_events' : Event.objects.get(user = User.objects.get(id=request.session['id']))
+        'user_events' : Event.objects.get(user = User.objects.get(id=request.session['id']))
     }
     print(context)
     return render(request, "dashboard.html", context)

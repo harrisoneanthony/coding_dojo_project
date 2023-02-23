@@ -28,7 +28,7 @@ class EventManager(models.Manager):
             errors['date'] = "Event must have a valid date."
         if postData['time'] == None:
             errors['time'] = "Event time must be entered"
-        if postData['max_attendees'] < 2:
+        if int(postData['max_attendees']) < 2:
             errors['max_attendees'] = "Max attendees must be atleast 2"
         if len(postData['information']) < 1:
             errors['information'] = "Event information must be entered"
@@ -56,4 +56,5 @@ class Event(models.Model):
     location = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     objects = EventManager()

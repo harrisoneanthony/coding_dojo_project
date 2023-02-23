@@ -31,6 +31,7 @@
     <h1>Create your event</h1>
     <div class="d-flex flex-wrap justify-content-around">
         <form action="/create_event" method="POST" class="index_forms bg-primary-subtle border">
+            {% csrf_token %}
             <div class="form_container d-flex flex-wrap justify-content-space-between">
                 <div class="form_group_left">
                     <div class="form_group">
@@ -52,10 +53,6 @@
                     <div class="form_group">
                         <label for="information">Information:</label>
                         <input type="text" name="information" class="form-control">
-                    </div>
-                    <div class="form_group">
-                        <label for="max_attendees">Max Attendees:</label>
-                        <input type="int" name="max_attendees" class="form-control">
                     </div>
                 </div>
                 <div class="form_group_right">

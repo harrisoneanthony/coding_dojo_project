@@ -37,9 +37,14 @@
             <th>Number of attendees</th>
         </thead>
         <tbody>
+            {% for event in users_events %}
             <tr>
-                <td></td>
+                <td>{{event.title}}</td>
+                <td>{{event.location}}</td>
+                <td>{{event.time}}</td>
+                <td>{{event.max_attendees}}</td>
             </tr>
+            {% endfor %}
         </tbody>
     </table>
     <h5 class="page_title">Here are your joined future events:</h5>

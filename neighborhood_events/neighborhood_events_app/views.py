@@ -16,7 +16,8 @@ def login_user(request):
 
 def dashboard(request):
     context = {
-        'one_user' : User.objects.get(id=request.session['id'])
+        'one_user' : User.objects.get(id=request.session['id']),
+        'users_events' : Event.objects.get(user = User.objects.get(id=request.session['id']))
     }
     return render(request, "dashboard.html", context)
 
@@ -32,6 +33,7 @@ def create_event(request):
             return redirect('/create/event')
         else:
             Event.objects.create(title = request.POST["title"], date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'])
+    return redirect('/dashboard')
 
 def create_user(request):
     if request.method == "POST":

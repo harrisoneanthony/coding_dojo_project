@@ -28,7 +28,7 @@
 </nav> 
 <body>
     <h1>Welcome, {{one_user.first_name}} </h1>
-    <h5 class="page_title">Today is {DATE} and your events are:</h5>
+    <h5 class="page_title">Today is {{todays_date}} and your events are:</h5>
     <table class="table">
         <thead>
             <th>Event Name</th>
@@ -56,9 +56,14 @@
             <th>Number of attendees</th>
         </thead>
         <tbody>
-                <tr>
-                    <td></td>
-                </tr>
+            {% for event in future_events %}
+            <tr>
+                <td>{{event.title}}</td>
+                <td>{{event.location}}</td>
+                <td>{{event.date}} {{event.time}}</td>
+                <td>{{event.max_attendees}}</td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </body>

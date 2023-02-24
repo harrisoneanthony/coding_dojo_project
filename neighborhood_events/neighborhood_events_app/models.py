@@ -45,7 +45,8 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = UserManager()
-
+    def __str__(self):
+        return f"<User object: {self.id} {self.first_name} {self.last_name} {self.email} {self.password} {self.dob} >"
 
 class Event(models.Model):
     title = models.CharField(max_length=255)
@@ -58,7 +59,11 @@ class Event(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     objects = EventManager()
     user = models.ForeignKey(User, related_name= "events", on_delete=models.CASCADE)
+    def __str__(self):
+        return f"<Event object: {self.id} {self.title} {self.date} {self.time} {self.max_attendees} {self.information} {self.location} {self.user} >"
 
 class Attending_event(models.Model):
     user = models.ForeignKey(User, related_name="attending_event", on_delete=models.CASCADE)
     event = models.ForeignKey(Event, related_name="attending_event", on_delete=models.CASCADE)
+    def __str__(self):
+        return f"<Attending_event object: {self.id} {self.user} {self.event}>"

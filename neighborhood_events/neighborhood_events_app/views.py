@@ -30,11 +30,13 @@ def dashboard(request):
 def create_user(request):
     if request.method == "POST":
         errors = User.objects.user_validator(request.POST)
+        # validation
         if len(errors) > 0:
             for key, value in errors.items():
                 messages.error(request,value)
             return redirect('/register')
         else:
+            # creation of User class
             # creating the hash before feeding it into the User class
             password = request.POST['password']
             pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()

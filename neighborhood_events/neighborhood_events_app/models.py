@@ -24,7 +24,7 @@ class EventManager(models.Manager):
         errors = {}
         if len(postData['title']) <2:
             errors['title'] = "Event title must be atleast 2 characters long."
-        if postData['date'] :
+        if not postData['date']:
             errors['date'] = "Event must have a valid date."
         if postData['time'] == None:
             errors['time'] = "Event time must be entered"
@@ -57,4 +57,8 @@ class Event(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = EventManager()
-    user = models.ForeignKey(User, related_name="events", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name= "events", on_delete=models.CASCADE)
+
+class Attending_event(models.Model):
+    user = models.ForeignKey(User, related_name="attending_event", on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, related_name="attending_event", on_delete=models.CASCADE)

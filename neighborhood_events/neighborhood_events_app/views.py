@@ -17,7 +17,7 @@ def login_user(request):
 def dashboard(request):
     context = {
         'one_user' : User.objects.get(id=request.session['id']),
-        'user_events' : Event.objects.get(user = User.objects.get(id=request.session['id']))
+        'user_events' : Event.objects.filter(user = User.objects.get(id=request.session['id']))
     }
     print(context)
     return render(request, "dashboard.html", context)
@@ -33,7 +33,7 @@ def create_event(request):
                 messages.error(request, value)
             return redirect('/create/event')
         else:
-            Event.objects.create(title = request.POST["title"], date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'])
+            Event.objects.create(title = request.POST["title"], date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'], user = User.objects.get(id=request.session['id']))
     return redirect('/dashboard')
 
 def create_user(request):
@@ -50,3 +50,15 @@ def create_user(request):
 def logout(request):
     del request.session
     return redirect('/login')
+
+def search(request):
+    context = {
+        "all_events" : Event.objects.exclude(user=User.objects.get(id=request.session['id']))
+    }
+    return render(request, 'search.html', context)
+
+def view_event(request, id):
+    context = {
+        "event" : Event.objects.get(id=id)
+    }
+    return render(request, 'view_event.html', context)

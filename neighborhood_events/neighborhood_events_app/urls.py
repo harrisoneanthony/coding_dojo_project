@@ -10,5 +10,7 @@ urlpatterns = [
     path('create_user', views.create_user),
     path('logout', views.logout),   
     path('create/event', views.create_event_page),
-    path('create_event', views.create_event)
+    path('create_event', views.create_event),
+    path('search', views.search),
+    path('view_event/<int:id>', views.view_event)
 ]

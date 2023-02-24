@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %} Dashboard {% endblock %}
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="/dashboard">Home </span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/create/event">New Event</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/search">Search Events</a>
+            </li>
+        </ul>
+    </div>
+    <div class="sub-header">
+        <div>
+            <form  action="/logout">
+                <button class="action_button bg-warning" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav> 
+
+<body>
+    <div>
+        <h1>Event Title</h1>
+        <h2>{{event.title}}</h2>
+        <h1>Information</h1>
+        <h2>{{event.date}} {{event.time}}</h2>
+        <h2>{{event.location}}</h2>
+        <h1>Users</h1>
+        <h2>{{event.max_attendees}}</h2> 
+        <!-- do something to count attendees -->
+    </div>
+    <div class="d-flex flex-wrap justify-content-around">
+        <form action="/create_event" method="POST" class="index_forms bg-primary-subtle border">
+            {% csrf_token %}
+            <div class="form_container d-flex flex-wrap justify-content-space-between">
+                <div class="form_group_left">
+                    <div class="form_group">
+                        <label for="title">Event title:</label>
+                        <input type="text" name="title" class="form-control">
+                    </div>
+                </div>
+            <input type="submit" value="Join/unjoin" class="action_button bg-success-subtle">
+        </form>
+</body>
+{% endblock %}

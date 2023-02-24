@@ -59,11 +59,11 @@ class Event(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     objects = EventManager()
     user = models.ForeignKey(User, related_name= "events", on_delete=models.CASCADE)
+    attendees = models.ManyToManyField(User, related_name="attendees")
     def __str__(self):
         return f"<Event object: {self.id} {self.title} {self.date} {self.time} {self.max_attendees} {self.information} {self.location} {self.user} >"
 
-class Attending_event(models.Model):
-    user = models.ForeignKey(User, related_name="attending_event", on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, related_name="attending_event", on_delete=models.CASCADE)
-    def __str__(self):
-        return f"<Attending_event object: {self.id} {self.user} {self.event}>"
+    
+
+# API Key
+# AIzaSyDyZWSyzkDoh8tieaORQh_iXNMSpwuADVM

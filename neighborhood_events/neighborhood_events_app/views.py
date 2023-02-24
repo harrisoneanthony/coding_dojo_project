@@ -17,11 +17,13 @@ def login_user(request):
     return redirect('/dashboard')
 
 def dashboard(request):
+    # print(Event.objects.filter(id = Attending_event.objects.get(user = User.objects.get(id=request.session['id']))))
+    user = User.objects.get(id=request.session['id'])
     context = {
         'one_user' : User.objects.get(id=request.session['id']),
         'user_events' : Event.objects.filter(user = User.objects.get(id=request.session['id'])),
         'todays_date' : todays_date.strftime("%a %b %d"),
-        # 'future_events' : Event.objects.filter(id = Attending_event.objects.get(user = User.objects.get(id=request.session['id'])))
+        'future_events' : user.attendees.all()
     }
     return render(request, "dashboard.html", context)
 
@@ -67,7 +69,9 @@ def view_event(request, id):
     return render(request, 'view_event.html', context)
 
 def join_event(request, id):
-    Attending_event.objects.create(user=User.objects.get(id=request.session['id']), event=Event.objects.get(id=id))
+    user = User.objects.get(id=request.session['id'])
+    event = Event.objects.get(id=id)
+    event.attendees.add(user)
     return redirect('/dashboard')
 
 # @app.route('/run_weather', methods = ['POST'])
@@ -96,3 +100,5 @@ def join_event(request, id):
 #             <h3>Wind: {{session.wind}} MPH</h3>
 #             <h3>Humidity: {{session.humidity}} %</h3>
 #             <h3>Description: {{session.description}}</h3>
+
+#   https://www.google.com/maps/embed/v1/MAP_MODE?key=YOUR_API_KEY&parameters

@@ -38,6 +38,7 @@
         <h2>{{event.max_attendees}}</h2> 
         <!-- do something to count attendees -->
     </div>
+    <a href="/join/{{event.id}}">Join event</a>
     <div class="d-flex flex-wrap justify-content-around">
         <form action="/create_event" method="POST" class="index_forms bg-primary-subtle border">
             {% csrf_token %}
@@ -48,7 +49,7 @@
                         <input type="text" name="title" class="form-control">
                     </div>
                 </div>
-            <input type="submit" value="Join/unjoin" class="action_button bg-success-subtle">
+            <input type="submit" value="submit" class="action_button bg-success-subtle">
         </form>
 </body>
 {% endblock %}

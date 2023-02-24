@@ -62,3 +62,7 @@ def view_event(request, id):
         "event" : Event.objects.get(id=id)
     }
     return render(request, 'view_event.html', context)
+
+def join_event(request, id):
+    Attending_event.objects.create(user=User.objects.get(id=request.session['id']), event=Event.objects.get(id=id))
+    return redirect('/dashboard')

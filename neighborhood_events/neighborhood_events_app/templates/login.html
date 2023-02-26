@@ -6,6 +6,15 @@
         <form class="index_forms" action="/login_user" method="POST" class="bg-primary-subtle border">
             {% csrf_token %}
             <h2 class="text-primary">Login</h2>
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{message.tags}}" {% endif %}>
+                        {{message}}
+                    </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
             <div class="form_group">
                 <label for="email">Email:</label>
                 <input type="text" name="email" class="form-control">

@@ -18,7 +18,12 @@
             </li>
         </ul>
     </div>
-    <div class="sub-header">
+    <div class="sub-header ">
+        <div>
+            <form  action="/account/{{one_user.id}}">
+                <button class="action_button bg-info" type="submit">Account</button>
+            </form>
+        </div>
         <div>
             <form  action="/logout">
                 <button class="action_button bg-warning" type="submit">Logout</button>

@@ -17,10 +17,9 @@ def login_user(request):
     return redirect('/dashboard')
 
 def dashboard(request):
-    # print(Event.objects.filter(id = Attending_event.objects.get(user = User.objects.get(id=request.session['id']))))
     user = User.objects.get(id=request.session['id'])
     context = {
-        'one_user' : User.objects.get(id=request.session['id']),
+        'one_user' : user,
         'user_events' : Event.objects.filter(user = User.objects.get(id=request.session['id'])),
         'todays_date' : todays_date.strftime("%a %b %d"),
         'future_events' : user.attendees.all()
@@ -74,6 +73,31 @@ def join_event(request, id):
     event.attendees.add(user)
     return redirect('/dashboard')
 
+def view_account(request, id):
+    id = request.session['id']
+    user = User.objects.get(id=id)
+    context = {
+        'user' : user
+    }
+    return render (request, 'user_profile.html', context)
+
+def update_user(request, id):
+    id = request.session['id']
+    if request.method == "POST":
+        user_to_update = User.objects.get(id=id)
+        errors = User.objects.user_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request,value)
+            return redirect(f'/account/{id}')
+        else:
+            user_to_update.first_name = request.POST["first_name"]
+            user_to_update.last_name = request.POST["last_name"]
+            user_to_update.email = request.POST["email"]
+            user_to_update.dob = request.POST["dob"]
+            user_to_update.password = request.POST["password"]
+            user_to_update.save()
+        return redirect(f'/account/{id}')
 # @app.route('/run_weather', methods = ['POST'])
 # def run_weather():
 #     the_call = requests.get(f"https://api.openweathermap.org/data/2.5/weather?zip={request.form['zipcode']}&appid=c36d1fbf846390b701c5c9f6937564e8&units=imperial").json()

@@ -13,6 +13,8 @@ class UserManager(models.Manager):
             errors['email'] = "Invalid email address!"
         if not re.search("^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[#$%&'()*+,-./:;<=>?@[\]^_`{|}~!]).*$", postData['password']):
             errors['password'] = "Password must be at least 8 characters and contain one number, one upper case character, and one special character."
+        if not postData['dob']:
+            errors['dob']  = "Please enter a valid DOB"
         if postData['password'] != postData['confirm_password']:
             errors['password'] = "Passwords must match", 'confirm_password'
         return errors
@@ -61,7 +63,7 @@ class Event(models.Model):
     user = models.ForeignKey(User, related_name= "events", on_delete=models.CASCADE)
     attendees = models.ManyToManyField(User, related_name="attendees")
     def __str__(self):
-        return f"<Event object: {self.id} {self.title} {self.date} {self.time} {self.max_attendees} {self.information} {self.location} {self.user} >"
+        return f"<Event object: {self.id} {self.title} {self.date} {self.time} {self.max_attendees} {self.information} {self.location} {self.user} {self.user} {self.attendees} >"
 
     
 

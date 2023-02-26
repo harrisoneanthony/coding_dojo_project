@@ -74,8 +74,16 @@ def search(request):
     return render(request, 'search.html', context)
 
 def view_event(request, id):
+    event = Event.objects.get(id=id)
+    attendees = event.attendees.all()
+    user_attends = False
+    for attendee in attendees:
+        if request.session['id'] == attendee.id:
+            user_attends = True
     context = {
-        "event" : Event.objects.get(id=id)
+        "event" : event,
+        "attendees" : attendees,
+        "user_attends" : user_attends
     }
     return render(request, 'view_event.html', context)
 
@@ -83,6 +91,13 @@ def join_event(request, id):
     user = User.objects.get(id=request.session['id'])
     event = Event.objects.get(id=id)
     event.attendees.add(user)
+    return redirect('/dashboard')
+
+def unjoin_event(request, id):
+    user = User.objects.get(id=request.session['id'])
+    event = Event.objects.get(id=id)
+    event.attendees.remove(user)
+    print(user.events)
     return redirect('/dashboard')
 
 # @app.route('/run_weather', methods = ['POST'])

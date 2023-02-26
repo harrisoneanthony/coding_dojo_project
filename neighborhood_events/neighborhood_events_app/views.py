@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from .models import *
 from django.contrib import messages
 import datetime
+import bcrypt
 
 todays_date = datetime.datetime.now()
 
@@ -12,6 +13,12 @@ def login(request):
     return render(request, "login.html")
 
 def login_user(request):
+    if request.method == "POST":
+        errors = User.objects.login_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request,value)
+            return redirect('/login')
     logged_in_user = User.objects.get(email=request.POST['email'])
     request.session['id'] = logged_in_user.id
     return redirect('/dashboard')
@@ -48,7 +55,11 @@ def create_user(request):
                 messages.error(request,value)
             return redirect('/register')
         else:
-            User.objects.create(first_name = request.POST["first_name"],last_name = request.POST["last_name"],email = request.POST["email"],dob = request.POST["dob"], password = request.POST["password"])
+            password = request.POST['password']
+            pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+            User.objects.create(first_name = request.POST["first_name"],last_name = request.POST["last_name"],email = request.POST["email"],dob = request.POST["dob"], password = pw_hash)
+            logged_in_user = User.objects.get(email=request.POST['email'])
+            request.session['id'] = logged_in_user.id
     return redirect('/dashboard')
 
 def logout(request):
@@ -62,8 +73,16 @@ def search(request):
     return render(request, 'search.html', context)
 
 def view_event(request, id):
+    event = Event.objects.get(id=id)
+    attendees = event.attendees.all()
+    user_attends = False
+    for attendee in attendees:
+        if request.session['id'] == attendee.id:
+            user_attends = True
     context = {
-        "event" : Event.objects.get(id=id)
+        "event" : event,
+        "attendees" : attendees,
+        "user_attends" : user_attends
     }
     return render(request, 'view_event.html', context)
 
@@ -71,6 +90,13 @@ def join_event(request, id):
     user = User.objects.get(id=request.session['id'])
     event = Event.objects.get(id=id)
     event.attendees.add(user)
+    return redirect('/dashboard')
+
+def unjoin_event(request, id):
+    user = User.objects.get(id=request.session['id'])
+    event = Event.objects.get(id=id)
+    event.attendees.remove(user)
+    print(user.events)
     return redirect('/dashboard')
 
 def view_account(request, id):

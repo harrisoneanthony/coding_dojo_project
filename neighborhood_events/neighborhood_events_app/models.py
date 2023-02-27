@@ -47,13 +47,25 @@ class UserManager(models.Manager):
                 errors['password'] = "Email address and password do not match our records"
         else:
             errors['email'] = "Email address and password do not match our records"
-        if not re.search("^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[#$%&'()*+,-./:;<=>?@[\]^_`{|}~!]).*$", postData['password']):
-            errors['password'] = "Password must be at least 8 characters and contain one number, one upper case character, and one special character."
-        if not postData['dob']:
-            errors['dob']  = "Please enter a valid DOB"
-        if postData['password'] != postData['confirm_password']:
-            errors['password'] = "Passwords must match", 'confirm_password'
         return errors
+    
+#     -------- old login validator, gave an error
+#     def login_validator(self, postData):
+#         errors = {}
+#         user = User.objects.filter(email=postData['email'])
+#         if user:
+#             logged_user = user[0]
+#             if not bcrypt.checkpw(postData['password'].encode(),logged_user.password.encode()):
+#                 errors['password'] = "Email address and password do not match our records"
+#         else:
+#             errors['email'] = "Email address and password do not match our records"
+#         if not re.search("^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[#$%&'()*+,-./:;<=>?@[\]^_`{|}~!]).*$", postData['password']):
+#             errors['password'] = "Password must be at least 8 characters and contain one number, one upper case character, and one special character."
+#         if not postData['dob']:
+#             errors['dob']  = "Please enter a valid DOB"
+#         if postData['password'] != postData['confirm_password']:
+#             errors['password'] = "Passwords must match", 'confirm_password'
+#         return errors
 
 class EventManager(models.Manager):
     def event_validator(self, postData):
@@ -96,6 +108,7 @@ class Event(models.Model):
     objects = EventManager()
     user = models.ForeignKey(User, related_name= "events", on_delete=models.CASCADE)
     attendees = models.ManyToManyField(User, related_name="attendees")
+    number_of_attendees = models.IntegerField()
     def __str__(self):
         return f"<Event object: {self.id} {self.title} {self.date} {self.time} {self.max_attendees} {self.information} {self.location} {self.user} {self.user} {self.attendees} >"
 

@@ -72,6 +72,14 @@ def search(request):
     }
     return render(request, 'search.html', context)
 
+def target_search(request):
+    search = request.GET['search']
+    filtered_events = Event.objects.filter(title__icontains=search)
+    context = {
+        "filtered_events" : filtered_events
+    }
+    return render(request, 'search.html', context)
+
 def view_event(request, id):
     event = Event.objects.get(id=id)
     attendees = event.attendees.all()

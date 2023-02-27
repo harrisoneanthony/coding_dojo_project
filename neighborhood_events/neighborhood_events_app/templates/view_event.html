@@ -28,32 +28,108 @@
 </nav> 
 
 <body>
+    <div class="row">
+        <div class="col-md-3">
+            <!-- Tabs nav -->
+            <div class="nav flex-column nav-pills" aria-orientation="vertical">
+                <a class="nav-link mb-3 p-3 shadow active" href="#v-pills-home" aria-controls="v-pills-home" aria-selected="true">
+                    <span class="font-weight-bold small text-uppercase">Title</span></a>
+                <a class="nav-link mb-3 p-3 shadow" href="#v-pills-home" aria-controls="v-pills-home" aria-selected="false">
+                    <span class="font-weight-bold small text-uppercase">Info</span></a>
+                <a class="nav-link mb-3 p-3 shadow" href="#v-pills-home" aria-controls="v-pills-home" aria-selected="false">
+                    <span class="font-weight-bold small text-uppercase">Users</span></a>
+            </div>
+        </div>
+
+
+        <div class="col-md-9">
+            <!-- Tabs content -->
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade shadow rounded bg-white show active p-5" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home">
+                    <h4 class="font-italic mb-4">Personal information</h4>
+                    <p class="font-italic text-muted mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+                
+                <div class="tab-pane fade shadow rounded bg-white p-5" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile">
+                    <h4 class="font-italic mb-4">Bookings</h4>
+                    <p class="font-italic text-muted mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+                
+                <div class="tab-pane fade shadow rounded bg-white p-5" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+                    <h4 class="font-italic mb-4">Reviews</h4>
+                    <p class="font-italic text-muted mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+                
+                <div class="tab-pane fade shadow rounded bg-white p-5" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+                    <h4 class="font-italic mb-4">Confirm booking</h4>
+                    <p class="font-italic text-muted mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                </div>
+            </div>
+        </div>
+    </div>
     <div>
-        <h1>Event Title</h1>
+<!--         <h1>Event Title</h1>
         <h2>{{event.title}}</h2>
         <h1>Information</h1>
         <h2>{{event.date}} {{event.time}}</h2>
         <h2>{{event.location}}</h2>
-        <h1>Users</h1>
-        <h2>{{event.max_attendees}}</h2> 
-        <!-- do something to count attendees -->
+        <h1>Users</h1> -->
+        <h2>Max of {{event.max_attendees}} can attend, {{open_spots}} spots remaining</h2>
     </div>
-    {% if user_attends == True %} 
+    <div>
+        {% if user_attends == True %} 
             <a href="/unjoin/{{event.id}}">Unjoin event</a>
-        {% else %}    
+        {% elif not event_full %}    
             <a href="/join/{{event.id}}">Join event</a>
+        {% else %}
+            <p>Event is full</p>
         {% endif %}
-    <div class="d-flex flex-wrap justify-content-around">
-        <form action="/create_event" method="POST" class="index_forms bg-primary-subtle border">
-            {% csrf_token %}
-            <div class="form_container d-flex flex-wrap justify-content-space-between">
-                <div class="form_group_left">
-                    <div class="form_group">
-                        <label for="title">Event title:</label>
-                        <input type="text" name="title" class="form-control">
+    </div>
+    <div class="d-flex flex-row justify-content-around">
+        <div>
+            <h2>Messages posted:</h2>
+            {% for message in all_messages %}
+                <p>Posted by {{message.user.first_name}} on {{message.created_at}} <br>
+                {{message.content}} <br>
+                {% if message.user.id == user.id %}
+                    <a href="/delete_message/{{message.id}}/{{event.id}}">Delete</a>
+                    <a href="/edit_message/{{message.id}}/{{event.id}}">Edit</a>
+                {% endif %}
+                </p>
+            {% endfor %}
+        </div>
+        <!-- 2 different forms, one for creating a message, and one to update a message -->
+        {% if edit == True %}
+            <div class="d-flex flex-wrap">
+                <form action="/message_edited/{{editing_message.id}}/{{event.id}}" method="POST" class="index_forms bg-primary-subtle border">
+                    {% csrf_token %}
+                    <div class="form_container d-flex flex-wrap justify-content-space-between">
+                        <div class="form_group_left">
+                            <div class="form_group">
+                                <label for="content">Write you message here:</label>
+                                <textarea class="form-control" name="content" rows="4" cols="50">{{editing_message.content}}</textarea>
+                            </div>
+                            <input type="submit" value="Update" class="action_button bg-success-subtle">
+                        </div>
                     </div>
-                </div>
-            <input type="submit" value="submit" class="action_button bg-success-subtle">
-        </form>
+                </form>
+            </div>
+        {% else %}
+            <div class="d-flex flex-wrap">
+                <form action="/create_message/{{event.id}}" method="POST" class="index_forms bg-primary-subtle border">
+                    {% csrf_token %}
+                    <div class="form_container d-flex flex-wrap justify-content-space-between">
+                        <div class="form_group_left">
+                            <div class="form_group">
+                                <label for="content">Write you message here:</label>
+                                <textarea class="form-control" name="content" rows="4" cols="50">{{editing_message.content}}</textarea>
+                            </div>
+                            <input type="submit" value="Submit" class="action_button bg-success-subtle">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
 </body>
 {% endblock %}

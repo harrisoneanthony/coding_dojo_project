@@ -75,14 +75,28 @@ def search(request):
 def view_event(request, id):
     event = Event.objects.get(id=id)
     attendees = event.attendees.all()
+    # figuring out which button to show, join or unjoin
     user_attends = False
+    # figuring out if need to show event is full
+    event_full = False
+    # counting attendees
     for attendee in attendees:
         if request.session['id'] == attendee.id:
             user_attends = True
+    if event.number_of_attendees == event.max_attendees:
+        event_full = True
+    open_spots = event.max_attendees - event.number_of_attendees
+    
+    all_messages = Message.objects.filter(event=event)
+
     context = {
         "event" : event,
         "attendees" : attendees,
-        "user_attends" : user_attends
+        "user_attends" : user_attends,
+        "event_full" : event_full,
+        "open_spots" : open_spots,
+        "all_messages" : all_messages,
+        "user" : User.objects.get(id=request.session['id'])
     }
     return render(request, 'view_event.html', context)
 
@@ -90,14 +104,76 @@ def join_event(request, id):
     user = User.objects.get(id=request.session['id'])
     event = Event.objects.get(id=id)
     event.attendees.add(user)
+    event.number_of_attendees += 1
+    event.save()
     return redirect('/dashboard')
 
 def unjoin_event(request, id):
     user = User.objects.get(id=request.session['id'])
     event = Event.objects.get(id=id)
     event.attendees.remove(user)
-    print(user.events)
+    event.number_of_attendees -= 1
+    event.save()
     return redirect('/dashboard')
+
+def cancel_event(request, id):
+    user = User.objects.get(id=request.session['id'])
+    event = Event.objects.get(id=id)
+    event.delete()
+    return redirect('/dashboard')
+
+def create_message(request,id):
+    if request.method == "POST":
+        # errors = Message.objects.message_validator(request.POST)
+        # if len(errors) > 0:
+        #     for key, value in errors.items():
+        #         messages.error(request,value)
+        #     return redirect('/register')
+        # else:
+        Message.objects.create(content = request.POST["content"], user = User.objects.get(id=request.session['id']), event = Event.objects.get(id=id))
+    return redirect(f'/view_event/{id}')
+
+def delete_message(request, id, ide):
+    message_to_delete = Message.objects.get(id=id)
+    message_to_delete.delete()
+    return redirect(f'/view_event/{ide}')
+
+def edit_message(request, id, ide):
+    event = Event.objects.get(id=ide)
+    attendees = event.attendees.all()
+    # figuring out which button to show, join or unjoin
+    user_attends = False
+    # figuring out if need to show event is full
+    event_full = False
+    # counting attendees
+    for attendee in attendees:
+        if request.session['id'] == attendee.id:
+            user_attends = True
+    if event.number_of_attendees == event.max_attendees:
+        event_full = True
+    open_spots = event.max_attendees - event.number_of_attendees
+    
+    all_messages = Message.objects.filter(event=event)
+    edit = True
+
+    context = {
+        "event" : event,
+        "attendees" : attendees,
+        "user_attends" : user_attends,
+        "event_full" : event_full,
+        "open_spots" : open_spots,
+        "all_messages" : all_messages,
+        "user" : User.objects.get(id=request.session['id']),
+        "editing_message" : Message.objects.get(id=id),
+        "edit" : edit
+    }
+    return render(request, 'view_event.html', context)
+
+def message_edited(request, id, ide):
+    message = Message.objects.get(id=id)
+    message.content = request.POST['content']
+    message.save()
+    return redirect(f'/view_event/{ide}')
 
 def view_account(request, id):
     id = request.session['id']

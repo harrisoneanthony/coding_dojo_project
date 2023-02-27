@@ -33,43 +33,55 @@
 </nav> 
 <body>
     <h1>Welcome, {{one_user.first_name}} </h1>
-    <h5 class="page_title">Today is {{todays_date}} and your events are:</h5>
-    <table class="table">
-        <thead>
-            <th>Event Name</th>
-            <th>Location</th>
-            <th>Time</th>
-            <th>Number of attendees</th>
-        </thead>
-        <tbody>
-            {% for event in user_events %}
-            <tr>
-                <td>{{event.title}}</td>
-                <td>{{event.location}}</td>
-                <td>{{event.time}}</td>
-                <td>{{event.max_attendees}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <h5 class="page_title">Here are your joined future events:</h5>
-    <table class="table">
-        <thead>
-            <th>Event Name</th>
-            <th>Location</th>
-            <th>Date</th>
-            <th>Number of attendees</th>
-        </thead>
-        <tbody>
-            {% for event in future_events %}
-            <tr>
-                <td>{{event.title}}</td>
-                <td>{{event.location}}</td>
-                <td>{{event.date}} {{event.time}}</td>
-                <td>{{event.max_attendees}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% if not user_events %}
+        <h3 class="pb-5">You have not yet created an event, click <a href="/create/event">here</a> to do so</h3>
+    {% else %}
+        <h5 class="page_title">Today is {{todays_date}} and your events are:</h5>
+        <table class="table">
+            <thead>
+                <th>Event Name</th>
+                <th>Location</th>
+                <th>Time</th>
+                <th>Number of attendees</th>
+                <th>Action</th>
+            </thead>
+            <tbody>
+                {% for event in user_events %}
+                <tr>
+                    <td>{{event.title}}</td>
+                    <td>{{event.location}}</td>
+                    <td>{{event.time}}</td>
+                    <td>{{event.number_of_attendees}}/{{event.max_attendees}}</td>
+                    <td><a href="/cancel_event/{{event.id}}">Cancel Event</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% if not future_events %}
+        <h3 class="pb-5">You have not yet joined any events, click <a href="/search">here</a> to do so</h3>
+    {% else %}
+        <h5 class="page_title">Here are your joined future events:</h5>
+        <table class="table">
+            <thead>
+                <th>Event Name</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Number of attendees</th>
+                <th>Action</th>
+            </thead>
+            <tbody>
+                {% for event in future_events %}
+                <tr>
+                    <td>{{event.title}}</td>
+                    <td>{{event.location}}</td>
+                    <td>{{event.date}} {{event.time}}</td>
+                    <td>{{event.number_of_attendees}}/{{event.max_attendees}}</td>
+                    <td><a href="/view_event/{{event.id}}">See Details</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 </body>
 {% endblock %}

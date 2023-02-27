@@ -99,7 +99,7 @@ class Event(models.Model):
     def __str__(self):
         return f"<Event object: {self.id} {self.title} {self.date} {self.time} {self.max_attendees} {self.information} {self.location} {self.user} {self.user} {self.attendees} >"
 
- class Message(models.Model):
+class Message(models.Model):
     content = models.TextField()
     user = models.ForeignKey(User, related_name= "messages", on_delete=models.CASCADE)
     event = models.ForeignKey(Event, related_name= "messages", on_delete=models.CASCADE)

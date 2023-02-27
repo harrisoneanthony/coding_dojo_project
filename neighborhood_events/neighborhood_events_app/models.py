@@ -84,7 +84,6 @@ class User(models.Model):
     def __str__(self):
         return f"<User object: {self.id} {self.first_name} {self.last_name} {self.email} {self.password} {self.dob} >"
 
-
 class Event(models.Model):
     title = models.CharField(max_length=255)
     date = models.DateField()

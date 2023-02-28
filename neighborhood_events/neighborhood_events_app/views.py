@@ -44,7 +44,7 @@ def create_event(request):
                 messages.error(request, value)
             return redirect('/create/event')
         else:
-            Event.objects.create(title = request.POST["title"].title(), date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'].title(), user = User.objects.get(id=request.session['id']), number_of_attendees=0)
+            event = Event.objects.create(title = request.POST["title"].title(), date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'].title(), user = User.objects.get(id=request.session['id']), number_of_attendees=0)
             return redirect(f'join/{event.id}')
     return redirect('/dashboard')
 

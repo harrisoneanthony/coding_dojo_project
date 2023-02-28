@@ -6,47 +6,9 @@ import bcrypt
 
 todays_date = datetime.datetime.now()
 
+# -------------------------------------------- LOGIN AND REGISTRATION
 def register(request):
     return render(request, "register.html")
-
-def login(request):
-    return render(request, "login.html")
-
-def login_user(request):
-    if request.method == "POST":
-        errors = User.objects.login_validator(request.POST)
-        if len(errors) > 0:
-            for key, value in errors.items():
-                messages.error(request,value)
-            return redirect('/login')
-    logged_in_user = User.objects.get(email=request.POST['email'])
-    request.session['id'] = logged_in_user.id
-    return redirect('/dashboard')
-
-def dashboard(request):
-    user = User.objects.get(id=request.session['id'])
-    context = {
-        'one_user' : user,
-        'user_events' : Event.objects.filter(user = User.objects.get(id=request.session['id'])),
-        'todays_date' : todays_date.strftime("%A, %b %d"),
-        'future_events' : user.attendees.all()
-    }
-    return render(request, "dashboard.html", context)
-
-def create_event_page(request):
-    return render(request, "create_event.html")
-
-def create_event(request):
-    if request.method == "POST":
-        errors = Event.objects.event_validator(request.POST)
-        if len(errors) > 0:
-            for key, value in errors.items():
-                messages.error(request, value)
-            return redirect('/create/event')
-        else:
-            event = Event.objects.create(title = request.POST["title"].title(), date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'].title(), user = User.objects.get(id=request.session['id']), number_of_attendees=0)
-            return redirect(f'join/{event.id}')
-    return redirect('/dashboard')
 
 def create_user(request):
     if request.method == "POST":
@@ -63,24 +25,89 @@ def create_user(request):
             request.session['id'] = logged_in_user.id
     return redirect('/dashboard')
 
+def login(request):
+    return render(request, "login.html")
+
+def login_user(request):
+    if request.method == "POST":
+        errors = User.objects.login_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request,value)
+            return redirect('/login')
+    logged_in_user = User.objects.get(email=request.POST['email'])
+    request.session['id'] = logged_in_user.id
+    return redirect('/dashboard')
+
 def logout(request):
     del request.session
     return redirect('/login')
 
-def search(request):
+# -------------------------------------------- VIEW AND UPDATE USER
+def view_account(request, id):
+    id = request.session['id']
+    user = User.objects.get(id=id)
+    date = user.dob.strftime('%Y-%m-%d')
     context = {
-        "all_events" : Event.objects.exclude(user=User.objects.get(id=request.session['id']))
+        'user' : user,
+        'date' : date,
     }
-    return render(request, 'search.html', context)
+    return render (request, 'user_profile.html', context)
 
-def target_search(request):
-    search = request.GET['search']
-    filtered_events = Event.objects.filter(title__icontains=search)
+def update_user(request, id):
+    id = request.session['id']
+    if request.method == "POST":
+        user_to_update = User.objects.get(id=id)
+        errors = User.objects.user_update_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request,value)
+            return redirect(f'/account/{id}')
+        else:
+            password = request.POST['new_password']
+            pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+            user_to_update.first_name = request.POST["first_name"]
+            user_to_update.last_name = request.POST["last_name"]
+            user_to_update.email = request.POST["email"]
+            user_to_update.dob = request.POST["dob"]
+            user_to_update.password = pw_hash
+            user_to_update.save()
+        return redirect(f'/account/{id}')
+
+# -------------------------------------------- DASHBOARD
+def dashboard(request):
+    user = User.objects.get(id=request.session['id'])
     context = {
-        "filtered_events" : filtered_events
+        'one_user' : user,
+        'user_events' : Event.objects.filter(user = User.objects.get(id=request.session['id'])),
+        'todays_date' : todays_date.strftime("%A, %b %d"),
+        'future_events' : user.attendees.all()
     }
-    return render(request, 'search.html', context)
+    return render(request, "dashboard.html", context)
 
+# -------------------------------------------- CREATE & DELETE EVENTS
+def create_event_page(request):
+    return render(request, "create_event.html")
+
+def create_event(request):
+    if request.method == "POST":
+        errors = Event.objects.event_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request, value)
+            return redirect('/create/event')
+        else:
+            event = Event.objects.create(title = request.POST["title"].title(), date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'].title(), user = User.objects.get(id=request.session['id']), number_of_attendees=0)
+            return redirect(f'join/{event.id}')
+    return redirect('/dashboard')
+
+def cancel_event(request, id):
+    user = User.objects.get(id=request.session['id'])
+    event = Event.objects.get(id=id)
+    event.delete()
+    return redirect('/dashboard')
+
+# -------------------------------------------- VIEW EVENTS & JOIN/UNJOIN
 def view_event(request, id):
     event = Event.objects.get(id=id)
     attendees = event.attendees.all()
@@ -131,22 +158,17 @@ def unjoin_event(request, id):
     event.save()
     return redirect('/dashboard')
 
-def cancel_event(request, id):
-    user = User.objects.get(id=request.session['id'])
-    event = Event.objects.get(id=id)
-    event.delete()
-    return redirect('/dashboard')
-
+# -------------------------------------------- MESSAGES IN EVENTS (CREATE/DELETE/EDIT)
 def create_message(request,id):
     if request.method == "POST":
-        # errors = Message.objects.message_validator(request.POST)
-        # if len(errors) > 0:
-        #     for key, value in errors.items():
-        #         messages.error(request,value)
-        #     return redirect('/register')
-        # else:
-        Message.objects.create(content = request.POST["content"], user = User.objects.get(id=request.session['id']), event = Event.objects.get(id=id))
-    return redirect(f'/view_event/{id}')
+        errors = Message.objects.message_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request,value)
+            return redirect(f'/view_event/{id}')
+        else:
+            Message.objects.create(content = request.POST["content"], user = User.objects.get(id=request.session['id']), event = Event.objects.get(id=id))
+        return redirect(f'/view_event/{id}')
 
 def delete_message(request, id, ide):
     message_to_delete = Message.objects.get(id=id)
@@ -185,36 +207,33 @@ def edit_message(request, id, ide):
     return render(request, 'view_event.html', context)
 
 def message_edited(request, id, ide):
-    message = Message.objects.get(id=id)
-    message.content = request.POST['content']
-    message.save()
-    return redirect(f'/view_event/{ide}')
-
-def view_account(request, id):
-    id = request.session['id']
-    user = User.objects.get(id=id)
-    context = {
-        'user' : user
-    }
-    return render (request, 'user_profile.html', context)
-
-def update_user(request, id):
-    id = request.session['id']
     if request.method == "POST":
-        user_to_update = User.objects.get(id=id)
-        errors = User.objects.user_validator(request.POST)
+        errors = Message.objects.message_validator(request.POST)
         if len(errors) > 0:
             for key, value in errors.items():
                 messages.error(request,value)
-            return redirect(f'/account/{id}')
+            return redirect(f'/view_event/{ide}')
         else:
-            user_to_update.first_name = request.POST["first_name"]
-            user_to_update.last_name = request.POST["last_name"]
-            user_to_update.email = request.POST["email"]
-            user_to_update.dob = request.POST["dob"]
-            user_to_update.password = request.POST["password"]
-            user_to_update.save()
-        return redirect(f'/account/{id}')
+            message = Message.objects.get(id=id)
+            message.content = request.POST['content']
+            message.save()
+    return redirect(f'/view_event/{ide}')
+
+# -------------------------------------------- SEARCH
+def search(request):
+    context = {
+        "all_events" : Event.objects.exclude(user=User.objects.get(id=request.session['id']))
+    }
+    return render(request, 'search.html', context)
+
+def target_search(request):
+    search = request.GET['search']
+    filtered_events = Event.objects.filter(title__icontains=search)
+    context = {
+        "filtered_events" : filtered_events
+    }
+    return render(request, 'search.html', context)
+    
 # @app.route('/run_weather', methods = ['POST'])
 # def run_weather():
 #     the_call = requests.get(f"https://api.openweathermap.org/data/2.5/weather?zip={request.form['zipcode']}&appid=c36d1fbf846390b701c5c9f6937564e8&units=imperial").json()

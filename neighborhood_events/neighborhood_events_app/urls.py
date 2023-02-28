@@ -12,7 +12,7 @@ urlpatterns = [
     path('create/event', views.create_event_page),
     path('create_event', views.create_event),
     path('search', views.search),
-    path('target_search', views.target_search),
+    # path('target_search', views.target_search),
     path('view_event/<int:id>', views.view_event),
     path('unjoin/<int:id>',views.unjoin_event),
     path('join/<int:id>',views.join_event),

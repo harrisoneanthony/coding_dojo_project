@@ -28,7 +28,7 @@ def dashboard(request):
     context = {
         'one_user' : user,
         'user_events' : Event.objects.filter(user = User.objects.get(id=request.session['id'])),
-        'todays_date' : todays_date.strftime("%a %b %d"),
+        'todays_date' : todays_date.strftime("%A, %b %d"),
         'future_events' : user.attendees.all()
     }
     return render(request, "dashboard.html", context)
@@ -44,7 +44,8 @@ def create_event(request):
                 messages.error(request, value)
             return redirect('/create/event')
         else:
-            Event.objects.create(title = request.POST["title"], date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'], user = User.objects.get(id=request.session['id']))
+            Event.objects.create(title = request.POST["title"].title(), date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'].title(), user = User.objects.get(id=request.session['id']), number_of_attendees=0)
+            return redirect(f'join/{event.id}')
     return redirect('/dashboard')
 
 def create_user(request):
@@ -57,7 +58,7 @@ def create_user(request):
         else:
             password = request.POST['password']
             pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-            User.objects.create(first_name = request.POST["first_name"],last_name = request.POST["last_name"],email = request.POST["email"],dob = request.POST["dob"], password = pw_hash)
+            User.objects.create(first_name = request.POST["first_name"].title(),last_name = request.POST["last_name"].title(),email = request.POST["email"],dob = request.POST["dob"], password = pw_hash)
             logged_in_user = User.objects.get(email=request.POST['email'])
             request.session['id'] = logged_in_user.id
     return redirect('/dashboard')
@@ -72,6 +73,14 @@ def search(request):
     }
     return render(request, 'search.html', context)
 
+def target_search(request):
+    search = request.GET['search']
+    filtered_events = Event.objects.filter(title__icontains=search)
+    context = {
+        "filtered_events" : filtered_events
+    }
+    return render(request, 'search.html', context)
+
 def view_event(request, id):
     event = Event.objects.get(id=id)
     attendees = event.attendees.all()
@@ -79,8 +88,10 @@ def view_event(request, id):
     user_attends = False
     # figuring out if need to show event is full
     event_full = False
+    attendee_list = []
     # counting attendees
     for attendee in attendees:
+        attendee_list.append(attendee.first_name)
         if request.session['id'] == attendee.id:
             user_attends = True
     if event.number_of_attendees == event.max_attendees:
@@ -89,9 +100,13 @@ def view_event(request, id):
     
     all_messages = Message.objects.filter(event=event)
 
+    # trying not to have a trailing comma after last attendee (happens when doing a loop in HTML)
+    attendee_list = ', '.join(attendee_list)
+    
     context = {
         "event" : event,
         "attendees" : attendees,
+        "attendee_list" : attendee_list,
         "user_attends" : user_attends,
         "event_full" : event_full,
         "open_spots" : open_spots,

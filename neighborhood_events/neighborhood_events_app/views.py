@@ -77,11 +77,16 @@ def update_user(request, id):
 # -------------------------------------------- DASHBOARD
 def dashboard(request):
     user = User.objects.get(id=request.session['id'])
+    future_events = user.attendees.all()
+    events_attending_but_not_organized = []
+    for event in future_events:
+        if event.user != user:
+            events_attending_but_not_organized.append(event)
     context = {
         'one_user' : user,
         'user_events' : Event.objects.filter(user = User.objects.get(id=request.session['id'])),
         'todays_date' : todays_date.strftime("%A, %b %d"),
-        'future_events' : user.attendees.all()
+        'future_events' : events_attending_but_not_organized,
     }
     return render(request, "dashboard.html", context)
 

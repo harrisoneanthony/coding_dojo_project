@@ -44,7 +44,7 @@ def create_event(request):
                 messages.error(request, value)
             return redirect('/create/event')
         else:
-            Event.objects.create(title = request.POST["title"], date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'], user = User.objects.get(id=request.session['id']), number_of_attendees=0)
+            Event.objects.create(title = request.POST["title"].title(), date=request.POST["date"], time=request.POST['time'], max_attendees=request.POST['max_attendees'], information=request.POST['information'], location=request.POST['location'].title(), user = User.objects.get(id=request.session['id']), number_of_attendees=0)
             return redirect(f'join/{event.id}')
     return redirect('/dashboard')
 
@@ -58,7 +58,7 @@ def create_user(request):
         else:
             password = request.POST['password']
             pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-            User.objects.create(first_name = request.POST["first_name"],last_name = request.POST["last_name"],email = request.POST["email"],dob = request.POST["dob"], password = pw_hash)
+            User.objects.create(first_name = request.POST["first_name"].title(),last_name = request.POST["last_name"].title(),email = request.POST["email"],dob = request.POST["dob"], password = pw_hash)
             logged_in_user = User.objects.get(email=request.POST['email'])
             request.session['id'] = logged_in_user.id
     return redirect('/dashboard')

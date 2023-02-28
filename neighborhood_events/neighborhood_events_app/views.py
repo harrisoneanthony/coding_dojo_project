@@ -28,7 +28,7 @@ def dashboard(request):
     context = {
         'one_user' : user,
         'user_events' : Event.objects.filter(user = User.objects.get(id=request.session['id'])),
-        'todays_date' : todays_date.strftime("%a %b %d"),
+        'todays_date' : todays_date.strftime("%A, %b %d"),
         'future_events' : user.attendees.all()
     }
     return render(request, "dashboard.html", context)

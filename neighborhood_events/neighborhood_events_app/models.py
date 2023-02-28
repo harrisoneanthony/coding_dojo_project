@@ -20,10 +20,10 @@ class UserManager(models.Manager):
                 errors['email'] = "Email address already exists"
         if not EMAIL_REGEX.match(postData['email']):
             errors['email'] = "Invalid email address!"
-        # if not re.search("^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!?]).*$", postData['password']):
-        #     errors['password'] = "Password must be at least 8 characters and contain one number, one upper case character, and one special character."
-        # if postData['password'] != postData['confirm_password']:
-        #     errors['password'] = "Passwords must match", 'confirm_password'
+        if not re.search("^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!?]).*$", postData['password']):
+            errors['password'] = "Password must be at least 8 characters and contain one number, one upper case character, and one special character."
+        if postData['password'] != postData['confirm_password']:
+            errors['password'] = "Passwords must match", 'confirm_password'
         if not postData['dob']:
             errors['dob'] = "Please select a date of birth"
         date_of_birth = datetime.strptime(postData['dob'], '%Y-%m-%d')
@@ -38,6 +38,41 @@ class UserManager(models.Manager):
                     errors['dob'] = "Individuals under 18 years old cannot register"
         return errors
 
+    def user_update_validator(self, postData):
+        errors = {}
+        logged_user = User.objects.get(id=postData['id'])
+        print(logged_user.password)
+        print(postData['new_password'].encode())
+        if len(postData['first_name']) < 2:
+            errors["first_name"] = "First name must be at least 2 characters."
+        if len(postData['last_name']) < 2:
+            errors["last_name"] = "Last name must be at least 2 characters."
+        if logged_user.email != postData['email']:
+            all_users = User.objects.all()
+            for user in all_users:
+                if user.email == postData['email']:
+                    errors['email'] = "Email address already exists"
+        if not EMAIL_REGEX.match(postData['email']):
+            errors['email'] = "Invalid email address!"
+        if not bcrypt.checkpw(postData['current_password'].encode(),logged_user.password.encode()):
+                errors['current_password'] = "Current password does not match our records"
+        if not re.search("^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!?]).*$", postData['new_password']):
+            errors['new_password'] = "Password must be at least 8 characters and contain one number, one upper case character, and one special character."
+        if postData['new_password'] != postData['confirm_new_password']:
+            errors['confirm_new_password'] = "Passwords must match"
+        if not postData['dob']:
+            errors['dob'] = "Please select a date of birth"
+        date_of_birth = datetime.strptime(postData['dob'], '%Y-%m-%d')
+        if (time_now.year - date_of_birth.year) < 18:
+            errors['dob'] = "Individuals under 18 years old cannot register"
+        if time_now.year - date_of_birth.year == 18:
+            if time_now.month < date_of_birth.month:
+                errors['dob'] = "Individuals under 18 years old cannot register"
+            if time_now.month == date_of_birth.month:
+                if time_now.day < date_of_birth.day:
+                    errors['dob'] = "Individuals under 18 years old cannot register"
+        return errors
+    
     def login_validator(self, postData):
         errors = {}
         user = User.objects.filter(email=postData['email'])
@@ -48,24 +83,6 @@ class UserManager(models.Manager):
         else:
             errors['email'] = "Email address and password do not match our records"
         return errors
-    
-#     -------- old login validator, gave an error
-#     def login_validator(self, postData):
-#         errors = {}
-#         user = User.objects.filter(email=postData['email'])
-#         if user:
-#             logged_user = user[0]
-#             if not bcrypt.checkpw(postData['password'].encode(),logged_user.password.encode()):
-#                 errors['password'] = "Email address and password do not match our records"
-#         else:
-#             errors['email'] = "Email address and password do not match our records"
-#         if not re.search("^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[#$%&'()*+,-./:;<=>?@[\]^_`{|}~!]).*$", postData['password']):
-#             errors['password'] = "Password must be at least 8 characters and contain one number, one upper case character, and one special character."
-#         if not postData['dob']:
-#             errors['dob']  = "Please enter a valid DOB"
-#         if postData['password'] != postData['confirm_password']:
-#             errors['password'] = "Passwords must match", 'confirm_password'
-#         return errors
 
 class EventManager(models.Manager):
     def event_validator(self, postData):
@@ -112,12 +129,20 @@ class Event(models.Model):
     def __str__(self):
         return f"<Event object: {self.id} {self.title} {self.date} {self.time} {self.max_attendees} {self.information} {self.location} {self.user} {self.user} {self.attendees} >"
 
+class MessageManager(models.Manager):
+    def message_validator(self, postData):
+        errors = {}
+        if len(postData['content']) < 2:
+            errors["content"] = "Message must be at least 2 characters."
+        return errors
+    
 class Message(models.Model):
     content = models.TextField()
     user = models.ForeignKey(User, related_name= "messages", on_delete=models.CASCADE)
     event = models.ForeignKey(Event, related_name= "messages", on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)  
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = MessageManager()
 
 # API Key
 # AIzaSyDyZWSyzkDoh8tieaORQh_iXNMSpwuADVM

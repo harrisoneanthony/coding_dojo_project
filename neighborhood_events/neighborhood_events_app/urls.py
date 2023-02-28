@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout', views.logout),   
     path('create/event', views.create_event_page),
     path('create_event', views.create_event),
+    path('cancel_event/<int:id>',views.cancel_event),
     path('search', views.search),
     path('target_search', views.target_search),
     path('view_event/<int:id>', views.view_event),

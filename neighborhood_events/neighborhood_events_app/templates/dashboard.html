@@ -36,14 +36,17 @@
     {% if not user_events %}
         <h3 class="pb-5">You have not yet created an event, click <a href="/create/event">here</a> to do so</h3>
     {% else %}
+    <div class="container col-10 p-4">
         <h5 class="page_title">Today is {{todays_date}} and your events are:</h5>
-        <table class="table">
+        <table class="table table-striped table-bordered" id="sortTable1">
             <thead>
-                <th>Event Name</th>
-                <th>Location</th>
-                <th>Time</th>
-                <th>Number of attendees</th>
-                <th>Action</th>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Number of attendees</th>
+                    <th>Action</th>
+                </tr>
             </thead>
             <tbody>
                 {% for event in user_events %}
@@ -60,12 +63,14 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>  
     {% endif %}
     {% if not future_events %}
         <h3 class="pb-5">You have not yet joined any events, click <a href="/search">here</a> to do so</h3>
     {% else %}
+    <div class="container col-10 p-4">
         <h5 class="page_title">Here are your joined future events:</h5>
-        <table class="table">
+        <table class="table table-striped table-bordered" id="sortTable2">
             <thead>
                 <th>Event Name</th>
                 <th>Location</th>
@@ -85,6 +90,11 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
     {% endif %}
+    <script>
+    $('#sortTable1').DataTable();
+    $('#sortTable2').DataTable();
+    </script>
 </body>
 {% endblock %}

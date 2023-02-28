@@ -32,7 +32,7 @@
         <p>First name: {{user.first_name}}</p>
         <p>Last name: {{user.last_name}}</p>
         <p>Email: {{user.email}}</p>
-        <p>Password: {{user.password}}</p>
+        <p>Password: *************</p>
         <p>Date of Birth: {{user.dob}}</p>
         <button onclick="show_update_form()">Update Info</button>
     </div>
@@ -65,12 +65,16 @@
                 <input type="text" name="email" class="form-control" value="{{user.email}}">
             </div>
             <div class="form_group">
-                <label for="password">Password:</label>
-                <input type="password" name="password" class="form-control" value="{{user.password}}">
+                <label for="current_password">Current Password:</label>
+                <input type="password" name="current_password" class="form-control">
             </div>
             <div class="form_group">
-                <label for="confirm_password">Confirm Password:</label>
-                <input type="password" name="confirm_password" class="form-control" value="{{user.password}}">
+                <label for="new_password">New Password:</label>
+                <input type="password" name="new_password" class="form-control">
+            </div>
+            <div class="form_group">
+                <label for="confirm_new_password">Confirm New Password:</label>
+                <input type="password" name="confirm_new_password" class="form-control">
             </div>
             <div class="form_group">
                 <label for="dob">Date of birth:</label>

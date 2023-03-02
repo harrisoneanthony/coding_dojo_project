@@ -3,6 +3,11 @@
     flex: auto;
     justify-content: space-evenly;
 }
+
+#to_log_in:link {
+    text-decoration: none;
+}
+
 /**
 * @license
 * Copyright 2019 Google LLC. All Rights Reserved.

@@ -26,9 +26,11 @@ width: 100%;
 margin: 0;
 padding: 0;
 } */
+
 .form_group_right {
     padding-left: 10px;
 }
+
 #description {
 font-family: Roboto;
 font-size: 15px;

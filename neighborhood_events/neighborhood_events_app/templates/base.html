@@ -20,8 +20,48 @@
         <script src="{% static 'js/script.js' %}"></script>
         <link rel="stylesheet" href="{% static 'css/style.css'%}">
         <title>{% block title %} Neighborhood Events {% endblock %}</title>
-    </head>
     <body>
+        {% block navbar %}
+        <div class="hero">
+            <nav>
+                <h1 class="title">Neighborhood Events</h1>
+                <ul>
+                    <li><a href="/dashboard">Home</a></li>
+                    <li><a href="/create/event">New Event</a></li>
+                    <li><a href="/search">Search</a></li>
+                </ul>
+                <img src="{% static 'img/profile.png' %}" alt="user-picture" class="user_pic" onclick="toggleMenu()">
+    
+                <div class="sub-menu" id="SubMenu">
+                    <div class="menu">
+                        <div class="user-info">
+                            <img src="{% static 'img/profile.png' %}" alt="user-picture">
+                            <h3>{{one_user.first_name}} {{one_user.last_name}}</h3>
+                        </div>
+                        <hr>
+                        <a href="/account/{{one_user.id}}" class="menu_links">
+                            <img src="{% static 'img/setting.png' %}" alt="user-picture">
+                            <p>Account</p>
+                            <span>></span>
+                        </a>
+                        <a href="/logout" class="menu_links">
+                            <img src="{% static 'img/logout.png' %}" alt="logout">
+                            <p>Logout</p>
+                            <span>></span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <script>
+            let SubMenu = document.getElementById("SubMenu");
+    
+            function toggleMenu(){
+                SubMenu.classList.toggle("open-menu");
+            }
+        </script>
+    </head>
+    {% endblock navbar %}
         <div class='container bg-light rounded align-items-center'>
             {% block content %}
             {% endblock  %}

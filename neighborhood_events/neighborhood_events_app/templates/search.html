@@ -30,7 +30,7 @@
         <input type="text" name="search" placeholder="Event name" style="float: right;">
     </form>
     <br></br>
-    <table class="table table-striped table-bordered table-sm">
+    <table class="table table-striped table-bordered table-sm" id="sortTable1">
         <thead>
             <th>Event Name</th>
             <th>Location</th>
@@ -78,5 +78,8 @@
             <a href="/search">Remove filters</a>
         {% endif %}
     </div>
+    <script>
+        $('#sortTable1').DataTable();
+    </script>
 </body>
 {% endblock %}

@@ -65,6 +65,15 @@
         <!-- first the editing message form -->
             <div class="d-flex flex-wrap">
                 <form action="/message_edited/{{editing_message.id}}/{{event.id}}" method="POST" class="index_forms bg-primary-subtle border">
+                    {% if messages %}
+                        <ul class="messages justify-content-around">
+                            {% for message in messages %}
+                                <li {% if message.tags %} class="{{message.tags}}" {% endif %}>
+                                    {{message}}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                     {% csrf_token %}
                     <div class="form_container d-flex flex-wrap justify-content-space-between">
                         <div class="form_group_left">
@@ -81,6 +90,15 @@
         <!-- then the creating message form -->
             <div class="d-flex flex-wrap col-6">
                 <form action="/create_message/{{event.id}}" method="POST" class="index_forms bg-primary-subtle">
+                    {% if messages %}
+                        <ul class="messages justify-content-around">
+                            {% for message in messages %}
+                                <li {% if message.tags %} class="{{message.tags}} text-danger" {% endif %}>
+                                    {{message}}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                     {% csrf_token %}
                     <div class="form_group_left p-2">
                         <div class="form_group">

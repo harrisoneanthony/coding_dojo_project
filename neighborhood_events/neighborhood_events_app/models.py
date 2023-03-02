@@ -146,6 +146,9 @@ class EventManager(models.Manager):
             errors['information'] = "Event information must be entered"
         if len(postData['location']) < 1:
             errors['location'] = "Event location must be entered"
+        date_of_event = datetime.strptime(postData['date'], '%Y-%m-%d')
+        if (time_now > date_of_event):
+                errors['date'] = "Event must be in the future"
         return errors
     
 

@@ -22,7 +22,7 @@ def create_user(request):
             pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
             secret_a = request.POST['secret_answer']
             sa_hash = bcrypt.hashpw(secret_a.encode(), bcrypt.gensalt()).decode()
-            User.objects.create(first_name = request.POST["first_name"].title(),last_name = request.POST["last_name"].title(),email = request.POST["email"],dob = request.POST["dob"], password = pw_hash)
+            User.objects.create(first_name = request.POST["first_name"].title(),last_name = request.POST["last_name"].title(),email = request.POST["email"],dob = request.POST["dob"], password = pw_hash, secret_question = request.POST['secret_question'], secret_answer = sa_hash)
             logged_in_user = User.objects.get(email=request.POST['email'])
             request.session['id'] = logged_in_user.id
     return redirect('/dashboard')
@@ -103,6 +103,7 @@ def resetting_forgotten_password(request):
             pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
             user = User.objects.get(id=request.POST['user_id'])
             user.password = pw_hash
+            user.save()
     return redirect('/login')
 
 # -------------------------------------------- VIEW AND UPDATE USER

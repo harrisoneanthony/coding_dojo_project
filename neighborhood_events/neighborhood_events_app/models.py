@@ -20,7 +20,7 @@ class UserManager(models.Manager):
                 errors['email'] = "Email address already exists"
         if not EMAIL_REGEX.match(postData['email']):
             errors['email'] = "Invalid email address!"
-        if not re.search("^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!?]).*$", postData['password']):
+        if not re.search("^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[#$%&'()*+,-./:;<=>?@[\]^_`{|}~!]).*$", postData['password']):
             errors['password'] = "Password must be at least 8 characters and contain one number, one upper case character, and one special character."
         if postData['password'] != postData['confirm_password']:
             errors['password'] = "Passwords must match", 'confirm_password'

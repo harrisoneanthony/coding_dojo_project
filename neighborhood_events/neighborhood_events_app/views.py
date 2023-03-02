@@ -150,7 +150,7 @@ def dashboard(request):
         if event.user != user:
             events_attending_but_not_organized.append(event)
     context = {
-        'one_user' : user,
+        'user' : user,
         'user_events' : Event.objects.filter(user = User.objects.get(id=request.session['id'])),
         'todays_date' : todays_date.strftime("%A, %b %d"),
         'future_events' : events_attending_but_not_organized,
@@ -159,7 +159,10 @@ def dashboard(request):
 
 # -------------------------------------------- CREATE & DELETE EVENTS
 def create_event_page(request):
-    return render(request, "create_event.html")
+    context ={
+        'user' : User.objects.get(id=request.session['id'])
+    }
+    return render(request, "create_event.html", context)
 
 def create_event(request):
     if request.method == "POST":
@@ -294,7 +297,9 @@ def message_edited(request, id, ide):
 # -------------------------------------------- SEARCH
 def search(request):
     context = {
-        "all_events" : Event.objects.exclude(user=User.objects.get(id=request.session['id']))
+        "all_events" : Event.objects.exclude(user=User.objects.get(id=request.session['id'])),
+        "user" : User.objects.get(id=request.session['id'])
+
     }
     return render(request, 'search.html', context)
 
@@ -305,32 +310,3 @@ def target_search(request):
         "filtered_events" : filtered_events
     }
     return render(request, 'search.html', context)
-    
-# @app.route('/run_weather', methods = ['POST'])
-# def run_weather():
-#     the_call = requests.get(f"https://api.openweathermap.org/data/2.5/weather?zip={request.form['zipcode']}&appid=c36d1fbf846390b701c5c9f6937564e8&units=imperial").json()
-#     # pprint.pprint(the_call.json())
-#     # print("City",the_call['name'])
-#     #need to create a session
-#     session['city'] = the_call['name']
-#     session['humidity'] = the_call['main']['humidity']
-#     session['wind'] = the_call['wind']['speed']
-#     session['temp'] = the_call['main']['temp']
-#     session['description'] = the_call['weather'][0]['description']
-#     # print("Description", the_call['weather'][0]['description'])
-#     return redirect('/dashboard')
-
-# Date and weather API input
-#             <form action="/run_weather" method="POST">
-#                 <label for="">ZIPCODE</label>
-#                 <input type="text" name="zipcode">
-#                 <button>Submit</button>
-#             </form>
-#             <h2>Current Weather Conditions:</h2>
-#             <h3>City: {{session.city}}</h3>
-#             <h3>Temperature: {{session.temp}} Degrees</h3>
-#             <h3>Wind: {{session.wind}} MPH</h3>
-#             <h3>Humidity: {{session.humidity}} %</h3>
-#             <h3>Description: {{session.description}}</h3>
-
-#   https://www.google.com/maps/embed/v1/MAP_MODE?key=YOUR_API_KEY&parameters

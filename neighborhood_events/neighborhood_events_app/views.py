@@ -197,7 +197,7 @@ def view_event(request, id):
         event_full = True
     open_spots = event.max_attendees - event.number_of_attendees
     
-    all_messages = Message.objects.filter(event=event)
+    all_messages = Message.objects.filter(event=event).order_by("-created_at")
 
     # trying not to have a trailing comma after last attendee (happens when doing a loop in HTML)
     attendee_list = ', '.join(attendee_list)

@@ -24,7 +24,7 @@
         {% block navbar %}
         <div class="hero">
             <nav>
-                <h1 class="title">Neighborhood Events</h1>
+                <a href="/dashboard" id="to_log_in"><h1 class="title">Neighborhood <br> Events</h1></a>
                 <ul>
                     <li><a href="/dashboard">Home</a></li>
                     <li><a href="/create/event">New Event</a></li>
@@ -62,7 +62,7 @@
         </script>
     </head>
     {% endblock navbar %}
-        <div class='container bg-light rounded align-items-center'>
+        <div class='container bg-light rounded align-items-center p-3'>
             {% block content %}
             {% endblock  %}
         </div>

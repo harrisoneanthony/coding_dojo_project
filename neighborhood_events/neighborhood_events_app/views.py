@@ -20,6 +20,8 @@ def create_user(request):
         else:
             password = request.POST['password']
             pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+            secret_a = request.POST['secret_answer']
+            sa_hash = bcrypt.hashpw(secret_a.encode(), bcrypt.gensalt()).decode()
             User.objects.create(first_name = request.POST["first_name"].title(),last_name = request.POST["last_name"].title(),email = request.POST["email"],dob = request.POST["dob"], password = pw_hash)
             logged_in_user = User.objects.get(email=request.POST['email'])
             request.session['id'] = logged_in_user.id
@@ -41,6 +43,66 @@ def login_user(request):
 
 def logout(request):
     del request.session
+    return redirect('/login')
+
+# --------------------------------------------------- FORGOT PASSWORD
+def forgot_password(request):
+    return render(request, "forgot_password.html")
+
+# first step of reset password, determining who the user is
+def find_email(request):
+    if request.method == "POST":
+        errors = User.objects.email_finder_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request,value)
+            return redirect('/forgot_password')
+    user_reset_pw = User.objects.get(email=request.POST['email'])
+    id = user_reset_pw.id
+    return redirect(f'/secret_q/{id}')
+
+# second step of reset password, pulling up their secret question
+def secret_q(request,id):
+    user = User.objects.get(id=id)
+    context = {
+        'secret_question' : user.secret_question,
+        'user_id' : user.id
+    }
+    return render(request, 'secret_q.html', context)
+
+# third step of reset password, checking for a match with their secret answer
+def answer_secret_q(request):
+    if request.method == "POST":
+        errors = User.objects.secret_q_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request,value)
+            return redirect('/forgot_password')
+    user_reset_pw = User.objects.get(id=request.POST['user_id'])
+    id = user_reset_pw.id
+    return redirect(f'/reset_password/{id}')
+
+# fourth step of reset password, loading password update page
+def reset_password(request, id):
+    user = User.objects.get(id=id)
+    context = {
+        'user_id' : user.id
+    }
+    return render(request, 'reset_password.html', context)
+
+# last step, making the password change
+def resetting_forgotten_password(request):
+    if request.method == "POST":
+        errors = User.objects.reset_password_validator(request.POST)
+        if len(errors) > 0:
+            for key, value in errors.items():
+                messages.error(request,value)
+            return redirect('/forgot_password')
+        else:
+            password = request.POST['password']
+            pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+            user = User.objects.get(id=request.POST['user_id'])
+            user.password = pw_hash
     return redirect('/login')
 
 # -------------------------------------------- VIEW AND UPDATE USER
@@ -66,11 +128,15 @@ def update_user(request, id):
         else:
             password = request.POST['new_password']
             pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+            secret_a = request.POST['secret_answer']
+            sa_hash = bcrypt.hashpw(secret_a.encode(), bcrypt.gensalt()).decode()
             user_to_update.first_name = request.POST["first_name"]
             user_to_update.last_name = request.POST["last_name"]
             user_to_update.email = request.POST["email"]
             user_to_update.dob = request.POST["dob"]
             user_to_update.password = pw_hash
+            user_to_update.secret_question = request.POST['secret_question']
+            user_to_update.secret_answer = sa_hash
             user_to_update.save()
         return redirect(f'/account/{id}')
 

@@ -28,4 +28,5 @@ urlpatterns = [
     path('delete_message/<int:id>/<int:ide>',views.delete_message),
     path('edit_message/<int:id>/<int:ide>',views.edit_message),
     path('message_edited/<int:id>/<int:ide>',views.message_edited),
+    path('upload/', views.upload),
 ]

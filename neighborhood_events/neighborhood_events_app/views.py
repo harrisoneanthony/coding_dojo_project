@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from .forms import *
 from .models import *
 from django.contrib import messages
 import datetime
@@ -140,6 +141,27 @@ def update_user(request, id):
             user_to_update.secret_answer = sa_hash
             user_to_update.save()
         return redirect(f'/account/{id}')
+
+def upload(request):
+    id = request.session['id']
+    user = User.objects.get(id=id)
+    context = {
+        'user' : user
+    }
+    return render(request, 'image_upload.html', context)
+
+def image_upload_view(request):
+    """Process images uploaded by users"""
+    if request.method == 'POST':
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            # Get the current instance object to display in the template
+            img_obj = form.instance
+            return render(request, 'image_upload.html', {'form': form, 'img_obj': img_obj})
+    else:
+        form = ImageForm()
+    return render(request, 'image_upload.html', {'form': form})
 
 # -------------------------------------------- DASHBOARD
 def dashboard(request):

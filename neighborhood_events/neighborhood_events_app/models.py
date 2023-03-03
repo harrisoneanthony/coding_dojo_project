@@ -116,6 +116,7 @@ class UserManager(models.Manager):
         return errors
 
 class User(models.Model):
+    image = models.ImageField(upload_to = 'images/', null=True, blank =True )
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
@@ -183,6 +184,6 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = MessageManager()
-
+    
 # API Key
 # AIzaSyDyZWSyzkDoh8tieaORQh_iXNMSpwuADVM

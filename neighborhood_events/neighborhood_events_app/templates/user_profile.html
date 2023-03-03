@@ -36,7 +36,10 @@
         <p>Email: {{user.email}}</p>
         <p>Password: *************</p>
         <p>Date of Birth: {{user.dob}}</p>
-        <button onclick="show_update_form()">Update Info</button>
+        <form class="mb-1" action="/upload">
+            <input type="submit" value="Upload a profile image">
+        </form>
+        <button id="show_update_btn" onclick="show_update_form()">Update Info</button>
     </div>
     <div style="visibility: hidden;" class="d-flex flex-wrap justify-content-around" id="update_user">
         <form class="index_forms" action="/update_user/{{user.id}}" method="POST" class="bg-primary-subtle border">

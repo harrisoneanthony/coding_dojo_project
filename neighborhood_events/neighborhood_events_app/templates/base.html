@@ -50,10 +50,10 @@
                     <div class="menu">
                         <div class="user-info">
                             <img src="{% static 'img/profile.png' %}" alt="user-picture">
-                            <h3>{{one_user.first_name}} {{one_user.last_name}}</h3>
+                            <h3>{{user.first_name}} {{user.last_name}}</h3>
                         </div>
                         <hr>
-                        <a href="/account/{{one_user.id}}" class="menu_links">
+                        <a href="/account/{{user.id}}" class="menu_links">
                             <img src="{% static 'img/setting.png' %}" alt="user-picture">
                             <p>Account</p>
                             <span>></span>

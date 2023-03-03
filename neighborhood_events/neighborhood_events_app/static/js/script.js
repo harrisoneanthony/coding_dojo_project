@@ -1,9 +1,12 @@
 function show_update_form() {
-    var x = document.getElementById("update_user");
+    var x = document.getElementById("update_user")
+    var y = document.getElementById("show_update_btn")
     if (x.style.visibility === "hidden") {
         x.style.visibility = "visible";
+        y.innerText = "Cancel";
     } else {
         x.style.visibility = "hidden";
+        y.innerText = "Update Info"
     }
 }
 

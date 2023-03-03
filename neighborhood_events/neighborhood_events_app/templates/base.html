@@ -25,9 +25,10 @@
         <div class="hero">
             <nav>
                 <a href="/dashboard" id="to_log_in"><h1 class="title">Neighborhood <br> Events</h1></a>
-                <div class="d-flex align-items-center justify-content-between">
+                <ul>
+                    <div class="d-flex align-items-center justify-content-between">
                         <h4 class="text-light ml-4 pl-4">{{todays_date}}</h4>
-                        <div>
+                        <div class="d-flex flex-row align-items-center">
                             <li>
                                 <div class="d-flex flex-column align-items-center">
                                     <span class="badge bg-danger" style="z-index:1;">New messages
@@ -41,7 +42,10 @@
                             <li><a href="/search">Search</a></li>
                         </div>
                     </div>
+                </ul>
+                
                 <img src="{% static 'img/profile.png' %}" alt="user-picture" class="user_pic" onclick="toggleMenu()">
+                
                 <div class="sub-menu" id="SubMenu" style="z-index:1;">
                     <div class="menu">
                         <div class="user-info">
@@ -49,7 +53,7 @@
                             <h3>{{one_user.first_name}} {{one_user.last_name}}</h3>
                         </div>
                         <hr>
-                        <a href="/account/{{user.id}}" class="menu_links">
+                        <a href="/account/{{one_user.id}}" class="menu_links">
                             <img src="{% static 'img/setting.png' %}" alt="user-picture">
                             <p>Account</p>
                             <span>></span>

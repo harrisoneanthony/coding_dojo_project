@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import *
+from .forms import ImageForm
 from .models import *
 from django.contrib import messages
 import datetime
@@ -142,27 +142,32 @@ def update_user(request, id):
             user_to_update.save()
         return redirect(f'/account/{id}')
 
+# def upload(request):
+#     id = request.session['id']
+#     user = User.objects.get(id=id)
+#     context = {
+#         'user' : user
+#     }
+#     return render(request, 'image_upload.html', context)
+
 def upload(request):
+    form = ImageForm()
     id = request.session['id']
     user = User.objects.get(id=id)
-    context = {
-        'user' : user
+    context ={
+        'user': user
     }
-    return render(request, 'image_upload.html', context)
-
-def image_upload_view(request):
-    """Process images uploaded by users"""
     if request.method == 'POST':
         form = ImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            # Get the current instance object to display in the template
-            img_obj = form.instance
-            return render(request, 'image_upload.html', {'form': form, 'img_obj': img_obj})
+        print('This is the form')
+    if form.is_valid():
+        user.image = form.save(commit=False)
+        user.save
+        print('This is where we want the picture')
+        return redirect(f'/account/{id}')
     else:
         form = ImageForm()
-    return render(request, 'image_upload.html', {'form': form})
-
+    return render(request, 'image_upload.html', {'form': form}, context)
 # -------------------------------------------- DASHBOARD
 def dashboard(request):
     user = User.objects.get(id=request.session['id'])

@@ -121,7 +121,7 @@ class User(models.Model):
     last_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
-    dob = models.DateField()
+    dob = models.DateField(null=True)
     secret_question = models.CharField(max_length=255)
     secret_answer = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)

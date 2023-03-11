@@ -5,7 +5,7 @@ from datetime import datetime
 import bcrypt
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
-time_now = dt.datetime.now()
+time_now = datetime.now()
 
 # ---------------------------------------------- USERS
 # --------------------- Registration and Login

@@ -139,17 +139,21 @@ class EventManager(models.Manager):
             errors['title'] = "Event title must be atleast 2 characters long."
         if not postData['date']:
             errors['date'] = "Event must have a valid date."
-        if postData['time'] == None:
+        else:
+            date_of_event = datetime.strptime(postData['date'], '%Y-%m-%d')
+            if (time_now > date_of_event):
+                errors['date'] = "Event must be in the future"
+        if not postData['time']:
             errors['time'] = "Event time must be entered"
-        if int(postData['max_attendees']) < 2:
-            errors['max_attendees'] = "Max attendees must be atleast 2"
+        if not postData['max_attendees']:
+            errors['max_attendees'] = "Event must have a max number of attendees"
+        else:
+            if int(postData['max_attendees']) < 2:
+                errors['max_attendees'] = "Max attendees must be atleast 2"
         if len(postData['information']) < 1:
             errors['information'] = "Event information must be entered"
         if len(postData['location']) < 1:
             errors['location'] = "Event location must be entered"
-        date_of_event = datetime.strptime(postData['date'], '%Y-%m-%d')
-        if (time_now > date_of_event):
-                errors['date'] = "Event must be in the future"
         return errors
     
 

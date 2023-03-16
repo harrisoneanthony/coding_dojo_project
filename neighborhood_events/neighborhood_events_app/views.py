@@ -92,8 +92,6 @@ def answer_secret_q(request):
 
 # fourth step of reset password, loading password update page
 def reset_password(request, id):
-    if 'id' not in request.session:
-        return redirect('/login')
     user = User.objects.get(id=id)
     context = {
         'user_id' : user.id
@@ -102,8 +100,6 @@ def reset_password(request, id):
 
 # last step, making the password change
 def resetting_forgotten_password(request):
-    if 'id' not in request.session:
-        return redirect('/login')
     if request.method == "POST":
         errors = User.objects.reset_password_validator(request.POST)
         if len(errors) > 0:

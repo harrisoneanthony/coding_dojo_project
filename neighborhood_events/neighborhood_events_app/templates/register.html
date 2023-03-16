@@ -15,15 +15,15 @@
         {% endif %}
         <div class="form_group">
             <label for="first_name">First Name:</label>
-            <input type="text" name="first_name" class="form-control">
+            <input type="text" name="first_name" class="form-control" value="{{request.session.first_name}}">
         </div>
         <div class="form_group">
             <label for="last_name">Last Name:</label>
-            <input type="text" name="last_name" class="form-control">
+            <input type="text" name="last_name" class="form-control" value="{{request.session.last_name}}">
         </div>
         <div class="form_group">
             <label for="email">Email:</label>
-            <input type="text" name="email" class="form-control">
+            <input type="text" name="email" class="form-control" value="{{request.session.email}}">
         </div>
         <div class="form_group">
             <label for="password">Password:</label>
@@ -35,18 +35,18 @@
         </div>
         <div class="form_group">
             <label for="dob">Date of birth:</label>
-            <input type="date" name="dob" class="form-control">
+            <input type="date" name="dob" class="form-control" value="{{request.session.dob}}">
         </div>
         <div class="form_group my-2">
             <label for="secret_question">Select Secret Question:</label>
-            <select class="form-control" name="secret_question">
+            <select class="form-control" name="secret_question" value="{{request.session.secret_question}}">
                 <option>What was the name of your first pet ?</option>
                 <option>What is your mother's maiden's name ?</option>
                 <option>What street did you grow up on ?</option>
             </select>
         </div>
         <div class="form_group my-2">
-            <input type="text" name="secret_answer" class="form-control">
+            <input type="text" name="secret_answer" class="form-control" value="{{request.session.secret_answer}}">
         </div>
         <input class="btn btn-primary col-12 action_button bg-primary-subtle mb-2" type="submit" value="Register">
     </form>

@@ -13,12 +13,19 @@ def register(request):
 
 def create_user(request):
     if request.method == "POST":
+        request.session['first_name'] = request.POST['first_name']
+        request.session['last_name'] = request.POST['last_name']
+        request.session['email'] = request.POST['email']
+        request.session['dob'] = request.POST['dob']
+        request.session['secret_question'] = request.POST['secret_question']
+        request.session['secret_answer'] = request.POST['secret_answer']
         errors = User.objects.user_validator(request.POST)
         if len(errors) > 0:
             for key, value in errors.items():
                 messages.error(request,value)
             return redirect('/register')
         else:
+            request.session.flush()
             password = request.POST['password']
             pw_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
             secret_a = request.POST['secret_answer']
@@ -43,7 +50,7 @@ def login_user(request):
     return redirect('/dashboard')
 
 def logout(request):
-    del request.session
+    request.session.flush()
     return redirect('/login')
 
 # --------------------------------------------------- FORGOT PASSWORD
@@ -85,6 +92,8 @@ def answer_secret_q(request):
 
 # fourth step of reset password, loading password update page
 def reset_password(request, id):
+    if 'id' not in request.session:
+        return redirect('/login')
     user = User.objects.get(id=id)
     context = {
         'user_id' : user.id
@@ -93,6 +102,8 @@ def reset_password(request, id):
 
 # last step, making the password change
 def resetting_forgotten_password(request):
+    if 'id' not in request.session:
+        return redirect('/login')
     if request.method == "POST":
         errors = User.objects.reset_password_validator(request.POST)
         if len(errors) > 0:
@@ -109,6 +120,8 @@ def resetting_forgotten_password(request):
 
 # -------------------------------------------- VIEW AND UPDATE USER
 def view_account(request, id):
+    if 'id' not in request.session:
+        return redirect('/login')
     id = request.session['id']
     user = User.objects.get(id=id)
     date = user.dob.strftime('%Y-%m-%d')
@@ -119,6 +132,8 @@ def view_account(request, id):
     return render (request, 'user_profile.html', context)
 
 def update_user(request, id):
+    if 'id' not in request.session:
+        return redirect('/login')
     id = request.session['id']
     if request.method == "POST":
         user_to_update = User.objects.get(id=id)
@@ -151,6 +166,8 @@ def update_user(request, id):
 #     return render(request, 'image_upload.html', context)
 
 def upload(request):
+    if 'id' not in request.session:
+        return redirect('/login')
     form = ImageForm()
     id = request.session['id']
     user = User.objects.get(id=id)
@@ -162,7 +179,7 @@ def upload(request):
         print('This is the form')
     if form.is_valid():
         user.image = form.save(commit=False)
-        user.save
+        user.save()
         print('This is where we want the picture')
         return redirect(f'/account/{id}')
     else:
@@ -170,6 +187,8 @@ def upload(request):
     return render(request, 'image_upload.html', {'form': form}, context)
 # -------------------------------------------- DASHBOARD
 def dashboard(request):
+    if 'id' not in request.session:
+        return redirect('/login')
     user = User.objects.get(id=request.session['id'])
     future_events = user.attendees.all()
     events_attending_but_not_organized = []
@@ -186,12 +205,16 @@ def dashboard(request):
 
 # -------------------------------------------- CREATE & DELETE EVENTS
 def create_event_page(request):
+    if 'id' not in request.session:
+        return redirect('/login')
     context ={
         'user' : User.objects.get(id=request.session['id'])
     }
     return render(request, "create_event.html", context)
 
 def create_event(request):
+    if 'id' not in request.session:
+        return redirect('/login')
     if request.method == "POST":
         errors = Event.objects.event_validator(request.POST)
         if len(errors) > 0:
@@ -204,6 +227,8 @@ def create_event(request):
     return redirect('/dashboard')
 
 def cancel_event(request, id):
+    if 'id' not in request.session:
+        return redirect('/login')
     user = User.objects.get(id=request.session['id'])
     event = Event.objects.get(id=id)
     event.delete()
@@ -211,6 +236,8 @@ def cancel_event(request, id):
 
 # -------------------------------------------- VIEW EVENTS & JOIN/UNJOIN
 def view_event(request, id):
+    if 'id' not in request.session:
+        return redirect('/login')
     event = Event.objects.get(id=id)
     attendees = event.attendees.all()
     # figuring out which button to show, join or unjoin
@@ -245,6 +272,8 @@ def view_event(request, id):
     return render(request, 'view_event.html', context)
 
 def join_event(request, id):
+    if 'id' not in request.session:
+        return redirect('/login')
     user = User.objects.get(id=request.session['id'])
     event = Event.objects.get(id=id)
     event.attendees.add(user)
@@ -253,6 +282,8 @@ def join_event(request, id):
     return redirect('/dashboard')
 
 def unjoin_event(request, id):
+    if 'id' not in request.session:
+        return redirect('/login')
     user = User.objects.get(id=request.session['id'])
     event = Event.objects.get(id=id)
     event.attendees.remove(user)
@@ -262,6 +293,8 @@ def unjoin_event(request, id):
 
 # -------------------------------------------- MESSAGES IN EVENTS (CREATE/DELETE/EDIT)
 def create_message(request,id):
+    if 'id' not in request.session:
+        return redirect('/login')
     if request.method == "POST":
         errors = Message.objects.message_validator(request.POST)
         if len(errors) > 0:
@@ -273,11 +306,15 @@ def create_message(request,id):
         return redirect(f'/view_event/{id}')
 
 def delete_message(request, id, ide):
+    if 'id' not in request.session:
+        return redirect('/login')
     message_to_delete = Message.objects.get(id=id)
     message_to_delete.delete()
     return redirect(f'/view_event/{ide}')
 
 def edit_message(request, id, ide):
+    if 'id' not in request.session:
+        return redirect('/login')
     event = Event.objects.get(id=ide)
     attendees = event.attendees.all()
     # figuring out which button to show, join or unjoin
@@ -309,6 +346,8 @@ def edit_message(request, id, ide):
     return render(request, 'view_event.html', context)
 
 def message_edited(request, id, ide):
+    if 'id' not in request.session:
+        return redirect('/login')
     if request.method == "POST":
         errors = Message.objects.message_validator(request.POST)
         if len(errors) > 0:
@@ -323,6 +362,8 @@ def message_edited(request, id, ide):
 
 # -------------------------------------------- SEARCH
 def search(request):
+    if 'id' not in request.session:
+        return redirect('/login')
     context = {
         "all_events" : Event.objects.exclude(user=User.objects.get(id=request.session['id'])),
         "user" : User.objects.get(id=request.session['id'])
@@ -331,6 +372,8 @@ def search(request):
     return render(request, 'search.html', context)
 
 def target_search(request):
+    if 'id' not in request.session:
+        return redirect('/login')
     search = request.GET['search']
     filtered_events = Event.objects.filter(title__icontains=search)
     context = {

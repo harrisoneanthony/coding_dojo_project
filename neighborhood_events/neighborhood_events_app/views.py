@@ -13,12 +13,10 @@ def register(request):
 
 def create_user(request):
     if request.method == "POST":
-        request.session['first_name'] = request.POST['first_name']
-        request.session['last_name'] = request.POST['last_name']
-        request.session['email'] = request.POST['email']
-        request.session['dob'] = request.POST['dob']
-        request.session['secret_question'] = request.POST['secret_question']
-        request.session['secret_answer'] = request.POST['secret_answer']
+        for c in request.POST:
+            request.session[c] = request.POST[c]
+        request.session['password']=''
+        request.session['confirm_password']=''
         errors = User.objects.user_validator(request.POST)
         if len(errors) > 0:
             for key, value in errors.items():
@@ -212,6 +210,8 @@ def create_event(request):
     if 'id' not in request.session:
         return redirect('/login')
     if request.method == "POST":
+        for c in request.POST:
+            request.session[c] = request.POST[c]
         errors = Event.objects.event_validator(request.POST)
         if len(errors) > 0:
             for key, value in errors.items():

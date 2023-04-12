@@ -19,23 +19,23 @@
                 <div class="form_group_left p-3">
                     <div class="form_group p-1">
                         <label for="title">Event title:</label>
-                        <input type="text" name="title" class="form-control">
+                        <input type="text" name="title" class="form-control" value="{{request.session.title}}">
                     </div>
                     <div class="form_group p-1">
                         <label for="date">Date:</label>
-                        <input type="date" name="date" class="form-control">
+                        <input type="date" name="date" class="form-control" value="{{request.session.date}}">
                     </div>
                     <div class="form_group p-1">
                         <label for="time">Time:</label>
-                        <input type="time" name="time" class="form-control">
+                        <input type="time" name="time" class="form-control" value="{{request.session.time}}">
                     </div>
                     <div class="form_group p-1">
                         <label for="max_attendees">Max Attendees:</label>
-                        <input type="int" name="max_attendees" class="form-control">
+                        <input type="int" name="max_attendees" class="form-control" value="{{request.session.max_attendees}}">
                     </div>
                     <div class="form_group p-1">
                         <label for="information">Information:</label>
-                        <input type="text" name="information" class="form-control">
+                        <input type="text" name="information" class="form-control" value="{{request.session.information}}">
                     </div>
                 </div>
                 <div class="form_group_right p-3 d-flex flex-column align-items-center">
@@ -74,7 +74,7 @@
                             </div>
                             <div id="pac-container">
                                 <label for="location"></label>
-                                <input id="pac-input" type="text" name="location" placeholder="Enter a location" />
+                                <input id="pac-input" type="text" name="location" placeholder="Enter a location" value="{{request.session.location}}">
                             </div>
                             <div id="map"></div>
                             <div id="infowindow-content">

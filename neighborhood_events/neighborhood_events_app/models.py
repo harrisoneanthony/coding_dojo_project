@@ -147,9 +147,11 @@ class EventManager(models.Manager):
             errors['time'] = "Event time must be entered"
         if not postData['max_attendees']:
             errors['max_attendees'] = "Event must have a max number of attendees"
-        else:
+        if postData['max_attendees'].isdigit():
             if int(postData['max_attendees']) < 2:
                 errors['max_attendees'] = "Max attendees must be atleast 2"
+        else:
+            errors['max_attendees'] = "Please enter a number for max attendees"
         if len(postData['information']) < 1:
             errors['information'] = "Event information must be entered"
         if len(postData['location']) < 1:

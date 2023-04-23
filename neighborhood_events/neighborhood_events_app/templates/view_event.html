@@ -63,8 +63,8 @@
         <!-- 2 different forms, one for creating a message, and one to update a message -->
         {% if edit == True %}
         <!-- first the editing message form -->
-            <div class="d-flex flex-wrap">
-                <form action="/message_edited/{{editing_message.id}}/{{event.id}}" method="POST" class="index_forms bg-primary-subtle border">
+            <div class="d-flex flex-wrap col-6">
+                <form action="/message_edited/{{editing_message.id}}/{{event.id}}" method="POST" class="index_forms bg-primary-subtle">
                     {% if messages %}
                         <ul class="messages justify-content-around">
                             {% for message in messages %}
@@ -78,10 +78,10 @@
                     <div class="form_container d-flex flex-wrap justify-content-space-between">
                         <div class="form_group_left">
                             <div class="form_group ">
-                                <label for="content">Write you message here:</label>
+                                <label for="content" class="font-italic"><h4>Write you message here:</h4></label>
                                 <textarea class="form-control" name="content" rows="4" cols="50">{{editing_message.content}}</textarea>
                             </div>
-                            <input type="submit" value="Update" class="btn btn-primary action_button bg-success-subtle">
+                            <input type="submit" value="Update" class="btn btn-primary action_button bg-success-subtle m-2 col-4">
                         </div>
                     </div>
                 </form>

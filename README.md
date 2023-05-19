@@ -55,7 +55,7 @@ your_project_name_here> `python manage.py runserver`
 
 ### Creating a new record
 
-ClassName.objects.create(field1="value for field1", field2="value for field2", etc.)
+-   ClassName.objects.create(field1="value for field1", field2="value for field2", etc.)
 
 ### Reading existing records
 

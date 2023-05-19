@@ -39,7 +39,7 @@ your_project_name_here> `python manage.py runserver`
 
 ## Configure database after updating classes in models.py
 
-`python manage.py makemigrations`
+`python manage.py makemigrations`  
 `python manage.py migrate`
 
 ## To use the shell, we'll run the following command in our terminal from our project's root directory (where our manage.py file is located):

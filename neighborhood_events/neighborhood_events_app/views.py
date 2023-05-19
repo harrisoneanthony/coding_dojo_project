@@ -151,13 +151,7 @@ def update_user(request, id):
             user_to_update.save()
         return redirect(f'/account/{id}')
 
-# def upload(request):
-#     id = request.session['id']
-#     user = User.objects.get(id=id)
-#     context = {
-#         'user' : user
-#     }
-#     return render(request, 'image_upload.html', context)
+# ---------------------------------------- upload image
 
 def upload(request):
     if 'id' not in request.session:
@@ -179,6 +173,7 @@ def upload(request):
     else:
         form = ImageForm()
     return render(request, 'image_upload.html', {'form': form}, context)
+
 # -------------------------------------------- DASHBOARD
 def dashboard(request):
     if 'id' not in request.session:

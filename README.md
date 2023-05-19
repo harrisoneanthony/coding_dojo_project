@@ -2,17 +2,11 @@
 
 ## Create virtual environment
 
----
-
 | Mac/Linux: | `python3 -m venv djangoPy3Env`
 -------------+----------------------------------------------------
 | Windows (command prompt): | `python -m venv djangoPy3Env`
 
-> ---
-
 ## Activate virtual environment
-
----
 
 ## | Mac/Linux: | `source djangoPy3Env/bin/activate`
 
@@ -43,3 +37,8 @@ your_project_name_here> `python manage.py startapp your_app_name_here`
 <!-- 3. Let's run our app again and check it out at localhost:8000/. Whew. We've done it! -->
 
 your_project_name_here> `python manage.py runserver`
+
+## Configure database after updating classes in models.py
+
+`python manage.py makemigrations`
+`python manage.py migrate`

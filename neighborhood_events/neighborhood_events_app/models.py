@@ -115,8 +115,8 @@ class UserManager(models.Manager):
             errors['password'] = "Passwords must match", 'confirm_password'
         return errors
 
+# --------------------------------------------- User model
 class User(models.Model):
-    image = models.ImageField(upload_to = 'images/', null=True, blank=True )
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
@@ -129,6 +129,12 @@ class User(models.Model):
     objects = UserManager()
     def __str__(self):
         return f"<User object: {self.id} {self.first_name} {self.last_name} {self.email} {self.password} {self.dob} >"
+
+# ---------------------------------------------- User Image
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profile_pictures/')
+
 
 # ---------------------------------------------- EVENTS
 

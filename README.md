@@ -2,16 +2,17 @@
 
 ## Create virtual environment
 
-Mac/Linux: `python3 -m venv djangoPy3Env`  
-Windows (command prompt): `python -m venv djangoPy3Env`
+### | Mac/Linux: | `python3 -m venv djangoPy3Env`
+
+### | Windows (command prompt): | `python -m venv djangoPy3Env`
 
 ## Activate virtual environment
 
-## | Mac/Linux: | `source djangoPy3Env/bin/activate`
+### | Mac/Linux: | `source djangoPy3Env/bin/activate`
 
-## | Windows (command prompt): | `call djangoPy3Env\Scripts\activate`
+### | Windows (command prompt): | `call djangoPy3Env\Scripts\activate`
 
-## | Windows (git bash) : | `source djangoPy3Env/Scripts/activate`
+### | Windows (git bash) : | `source djangoPy3Env/Scripts/activate`
 
 ## install Django
 

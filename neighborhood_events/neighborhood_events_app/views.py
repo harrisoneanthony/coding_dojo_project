@@ -166,10 +166,11 @@ def upload(request):
         form = ImageForm(request.POST, request.FILES)
         print('This is the form')
     if form.is_valid():
-        user.image = form.save(commit=False)
-        user.save()
-        print('This is where we want the picture')
+        profile = form.save(commit=False)
+        profile.user = user
+        profile.save()
         return redirect(f'/account/{id}')
+
     else:
         form = ImageForm()
     return render(request, 'image_upload.html', {'form': form}, context)

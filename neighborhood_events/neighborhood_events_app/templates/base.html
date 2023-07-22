@@ -4,11 +4,79 @@
         <meta charset='utf-8'>
         <meta http-equiv='X-UA-Compatible' content='IE=edge'>
         <meta name='viewport' content='width=device-width, initial-scale=1'>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous" defer></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <!-- imports for the tables -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css">
+        <script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDyZWSyzkDoh8tieaORQh_iXNMSpwuADVM&callback=initMap&libraries=places&v=weekly" defer></script>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default" defer></script>   
+        {% load staticfiles %}
+        <script src="{% static 'js/script.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'css/style.css'%}">
         <title>{% block title %} Neighborhood Events {% endblock %}</title>
-    </head>
     <body>
-        <div class='container bg-light rounded align-items-center'>
+        {% block navbar %}
+        <div class="hero">
+            <nav>
+                <a href="/dashboard" id="to_log_in"><h1 class="title">Neighborhood <br> Events</h1></a>
+                <ul>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <h4 class="text-light ml-4 pl-4">{{todays_date}}</h4>
+                        <div class="d-flex flex-row align-items-center">
+                            <li>
+                                <!-- <div class="d-flex flex-column align-items-center">
+                                    <span class="badge bg-danger" style="z-index:1;">New messages
+                                        <span class="visually-hidden">New alerts</span>
+                                    </span> -->
+                                    <a href="/dashboard">Home
+                                    <!-- </a>
+                                </div> -->
+                            </li>
+                            <li><a href="/create/event">New Event</a></li>
+                            <li><a href="/search">Search</a></li>
+                        </div>
+                    </div>
+                </ul>
+                
+                <img src="{% static 'img/profile.png' %}" alt="user-picture" class="user_pic" onclick="toggleMenu()">
+                
+                <div class="sub-menu" id="SubMenu" style="z-index:1;">
+                    <div class="menu">
+                        <div class="user-info">
+                            <img src="{% static 'img/profile.png' %}" alt="user-picture">
+                            <h3>{{user.first_name}} {{user.last_name}}</h3>
+                        </div>
+                        <hr>
+                        <a href="/account/{{user.id}}" class="menu_links">
+                            <img src="{% static 'img/setting.png' %}" alt="user-picture">
+                            <p>Account</p>
+                            <span>></span>
+                        </a>
+                        <a href="/logout" class="menu_links">
+                            <img src="{% static 'img/logout.png' %}" alt="logout">
+                            <p>Logout</p>
+                            <span>></span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <script>
+            let SubMenu = document.getElementById("SubMenu");
+    
+            function toggleMenu(){
+                SubMenu.classList.toggle("open-menu");
+            }
+        </script>
+    </head>
+    {% endblock navbar %}
+        <div class='container bg-light rounded align-items-center p-3'>
             {% block content %}
             {% endblock  %}
         </div>

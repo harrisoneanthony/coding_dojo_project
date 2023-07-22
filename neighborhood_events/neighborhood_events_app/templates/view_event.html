@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %} View Event {% endblock %}
+{% block content %}
+<body>
+    <h1>Hope you'll enjoy this event!</h1>
+    <div class="d-flex flex-column align-items-center">
+        <div class="d-flex flex-row col-12 m-4">
+            <div class="col-md-3">
+                <!-- Tabs nav -->
+                <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <button class="nav-link active mb-3 p-3 shadow" id="v-pills-title-tab" data-bs-toggle="pill" data-bs-target="#v-pills-title" type="button" role="tab" aria-controls="v-pills-title" aria-selected="true">Title</button>
+                    <button class="nav-link mb-3 p-3 shadow" id="v-pills-info-tab" data-bs-toggle="pill" data-bs-target="#v-pills-info" type="button" role="tab" aria-controls="v-pills-info" aria-selected="false">Information</button>
+                    <button class="nav-link mb-3 p-3 shadow" id="v-pills-users-tab" data-bs-toggle="pill" data-bs-target="#v-pills-users" type="button" role="tab" aria-controls="v-pills-users" aria-selected="false">Users</button>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <!-- Tabs content -->
+                <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade shadow rounded bg-white show active p-5" id="v-pills-title" role="tabpanel" aria-labelledby="v-pills-title">
+                        <h3 class="font-italic mb-4">{{event.title}}</h3>
+                        <h4 class="font-italic text-muted mb-2"> Organized by {{event.user.first_name}}</h4>
+                    </div>
+                    <div class="tab-pane fade shadow rounded bg-white p-5" id="v-pills-info" role="tabpanel" aria-labelledby="v-pills-info">
+                        <h3 class="font-italic mb-4">{{event.date}}</h3>
+                        <h4 class="font-italic text-muted mb-2"> The envent starts at {{event.time}}</h4>
+                        <h5 class="font-italic text-muted mb-2">Where: {{event.location}}</h5>
+                    </div>
+                    <div class="tab-pane fade shadow rounded bg-white p-5" id="v-pills-users" role="tabpanel" aria-labelledby="v-pills-users-tab">
+                        <h3 class="font-italic mb-4">Here you can see eveyone attending</h3>
+                        <h4 class="font-italic text-muted mb-2">
+                            Max number of attendees: {{event.max_attendees}} <br>
+                            Attending: {{attendee_list}} <br>
+                            Spots remaining: {{open_spots}}<br> 
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            {% if user_attends == True %}
+                <a class="btn btn-warning mb-5" href="/unjoin/{{event.id}}"><h5>Unjoin event</h5></a>
+            {% elif not event_full %}    
+                <a class="btn btn-warning mb-5" href="/join/{{event.id}}">Join event</a>
+            {% else %}
+                <p class="btn btn-warning mb-5">Event is full</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col 12 d-flex flex-row justify-content-around">
+        <div>
+            <h2>Messages posted:</h2>
+            {% for message in all_messages %}
+                <p class="bg-white p-2 border rounded">
+                    Posted by {{message.user.first_name}} on {{message.created_at}} <br>
+                    {{message.content}} <br>
+                    {% if message.user.id == user.id %}
+                        <a href="/delete_message/{{message.id}}/{{event.id}}">Delete</a>
+                        <a href="/edit_message/{{message.id}}/{{event.id}}">Edit</a>
+                    {% endif %}
+                </p>
+            {% endfor %}
+        </div>
+        <!-- 2 different forms, one for creating a message, and one to update a message -->
+        {% if edit == True %}
+        <!-- first the editing message form -->
+            <div class="d-flex flex-wrap col-6">
+                <form action="/message_edited/{{editing_message.id}}/{{event.id}}" method="POST" class="index_forms bg-primary-subtle">
+                    {% if messages %}
+                        <ul class="messages justify-content-around">
+                            {% for message in messages %}
+                                <li {% if message.tags %} class="{{message.tags}}" {% endif %}>
+                                    {{message}}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% csrf_token %}
+                    <div class="form_container d-flex flex-wrap justify-content-space-between">
+                        <div class="form_group_left">
+                            <div class="form_group ">
+                                <label for="content" class="font-italic"><h4>Write you message here:</h4></label>
+                                <textarea class="form-control" name="content" rows="4" cols="50">{{editing_message.content}}</textarea>
+                            </div>
+                            <input type="submit" value="Update" class="btn btn-primary action_button bg-success-subtle m-2 col-4">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        {% else %}
+        <!-- then the creating message form -->
+            <div class="d-flex flex-wrap col-6">
+                <form action="/create_message/{{event.id}}" method="POST" class="index_forms bg-primary-subtle">
+                    {% if messages %}
+                        <ul class="messages justify-content-around">
+                            {% for message in messages %}
+                                <li {% if message.tags %} class="{{message.tags}} text-danger" {% endif %}>
+                                    {{message}}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% csrf_token %}
+                    <div class="form_group_left p-2">
+                        <div class="form_group">
+                            <label for="content" class="font-italic"><h4>Write you message here:</h4></label>
+                            <textarea class="form-control" name="content" rows="4" cols="50">{{editing_message.content}}</textarea>
+                        </div>
+                        <input type="submit" value="Submit" class="btn btn-primary action_button bg-success-subtle m-2 col-4">
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</body>
+{% endblock %}
